@@ -1,3 +1,4 @@
+import org.cadixdev.mercury.shadow.org.eclipse.jdt.core.dom.ModuleModifier.isTransitive
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,23 +8,41 @@ plugins {
 }
 
 repositories {
-    maven("https://maven.teamresourceful.com/repository/maven-public/")
-    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
+    maven(url = "https://repo.hypixel.net/repository/Hypixel/")
+    maven(url = "https://api.modrinth.com/maven")
+    maven(url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.21")
-    mappings(loom.officialMojangMappings())
+    minecraft(libs.minecraft)
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.21.3:2024.12.07@zip")
+    })
+    modImplementation(libs.loader)
+    modImplementation(libs.fabrickotlin)
+    modImplementation(libs.fabric)
 
-    modImplementation(libs.fabricLoader)
-    modImplementation(libs.fabricApi)
-    modImplementation(libs.fabricKt)
+    modImplementation(libs.hypixelapi)
+    modImplementation(libs.skyblockapi)
+    modImplementation(libs.rconfig)
+    modImplementation(libs.rconfigkt) { isTransitive = false }
+    modImplementation(libs.rlib)
+    modImplementation(libs.olympus)
+    modImplementation(libs.discordipc)
 
-    modImplementation(libs.devauth)
+    include(libs.hypixelapi)
+    include(libs.skyblockapi)
+    include(libs.rconfig)
+    include(libs.rconfigkt) { isTransitive = false }
+    include(libs.rlib)
+    include(libs.olympus)
 
-    modImplementation(libs.resourcefulconfig)
-    modImplementation(libs.resourcefulconfigkt)
-    include(libs.resourcefulconfigkt)
+    modRuntimeOnly(libs.devauth)
+    modRuntimeOnly(libs.modmenu)
 }
 
 loom {
@@ -57,10 +76,4 @@ tasks {
 
 java {
     withSourcesJar()
-}
-
-idea {
-    module {
-        excludeDirs.add(file("run"))
-    }
 }

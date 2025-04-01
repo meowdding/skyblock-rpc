@@ -1,30 +1,23 @@
 {
     "schemaVersion": 1,
-    "id": "examplemod",
+    "id": "skyblockrpc",
     "version": "${version}",
-    "name": "examplemod",
+    "name": "SkyBlockRPC",
     "description": "",
     "authors": [ ],
     "contact": { },
     "license": "All-Rights-Reserved",
     "environment": "client",
     "entrypoints": {
-        "client": [
+        "main": [
             {
                 "adapter": "kotlin",
-                "value": "com.example.template.ExampleMod"
+                "value": "tech.gravyboat.skyblockrpc.SkyBlockRPC"
             }
-        ],
-        "modmenu": [
-            "com.example.template.ModMenuCompat"
         ]
     },
-    "mixins": [
-        "template.mixins.json"
-    ],
     "depends": {
-        "fabricloader": ">=${loader_version}",
         "fabric": "*",
-        "minecraft": "${minecraft_version}"
+        "minecraft": "1.21.5"
     }
 }

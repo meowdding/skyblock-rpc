@@ -1,5 +1,4 @@
-
-rootProject.name = "Example Mod"
+rootProject.name = "SkyBlockRPC"
 
 pluginManagement {
     repositories {
