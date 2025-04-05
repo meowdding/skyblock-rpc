@@ -1,4 +1,4 @@
-package tech.gravyboat.skyblockrpc
+package tech.gravyboat.skyblockrpc.rpc
 
 import com.google.gson.JsonObject
 import com.jagrosh.discordipc.IPCClient

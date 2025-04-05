@@ -5,6 +5,7 @@ import com.mojang.serialization.JsonOps
 import com.teamresourceful.resourcefullib.common.collections.WeightedCollection
 import com.teamresourceful.resourcefullib.common.lib.Constants
 import net.fabricmc.loader.api.FabricLoader
+import tech.gravyboat.skyblockrpc.rpc.RpcEntry
 import java.nio.file.Files
 
 object Config {

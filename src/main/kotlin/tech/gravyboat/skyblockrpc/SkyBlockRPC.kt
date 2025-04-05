@@ -1,6 +1,7 @@
 package tech.gravyboat.skyblockrpc
 
 import net.fabricmc.api.ModInitializer
+import tech.gravyboat.skyblockrpc.rpc.RPCClient
 import tech.thatgravyboat.skyblockapi.api.SkyBlockAPI
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.base.predicates.OnlyOnSkyBlock
@@ -25,6 +26,7 @@ object SkyBlockRPC : ModInitializer {
         RPCClient.updateActivity {
             setDetails(Placeholders.parse(line1))
             setState(Placeholders.parse(line2))
+            setLargeImage("logo")
         }
     }
 }
