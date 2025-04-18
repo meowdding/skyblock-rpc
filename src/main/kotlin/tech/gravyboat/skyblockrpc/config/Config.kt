@@ -3,6 +3,7 @@ package tech.gravyboat.skyblockrpc.config
 import com.teamresourceful.resourcefulconfig.api.types.info.ResourcefulConfigLink
 import com.teamresourceful.resourcefulconfig.api.types.options.TranslatableValue
 import com.teamresourceful.resourcefulconfigkt.api.ConfigKt
+import tech.gravyboat.skyblockrpc.Element
 
 object Config : ConfigKt("skyblock-rpc/config") {
 
@@ -26,4 +27,19 @@ object Config : ConfigKt("skyblock-rpc/config") {
                 TranslatableValue("GitHub"),
             ),
         )
+
+    val line1 by enum(Element.PURSE) {
+        name = TranslatableValue("Line 1")
+        description = TranslatableValue("Line 1 description")
+    }
+
+    val line2 by enum(Element.ISLAND_AREA) {
+        name = TranslatableValue("Line 1")
+        description = TranslatableValue("Line 1 description")
+    }
+
+    val customText by string("Using SkyBlockRPC") {
+        name = TranslatableValue("Custom Text")
+        description = TranslatableValue("Custom Text description")
+    }
 }

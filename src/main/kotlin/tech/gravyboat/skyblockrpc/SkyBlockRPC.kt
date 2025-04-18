@@ -42,12 +42,9 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
     @TimePassed("8s")
     @OnlyOnSkyBlock
     fun onTick(event: TickEvent) {
-        val line1 = "Island: \${island}"
-        val line2 = "A".repeat(50)
-
         RPCClient.updateActivity {
-            setDetails(Placeholders.parse(line1))
-            setState(Placeholders.parse(line2))
+            setDetails(Config.line1.getter())
+            setState(Config.line2.getter())
             setLargeImage("logo")
         }
     }
