@@ -42,4 +42,21 @@ object Config : ConfigKt("skyblock-rpc/config") {
         name = TranslatableValue("Custom Text")
         description = TranslatableValue("Custom Text description")
     }
+
+    val rotational1 by draggable(*Element.defaultElements.toTypedArray()) {
+        name = TranslatableValue("Rotational 1")
+        description = TranslatableValue("Rotational 1 description")
+    }
+
+    val rotational2 by draggable(*Element.defaultElements.toTypedArray()) {
+        name = TranslatableValue("Rotational 2")
+        description = TranslatableValue("Rotational 2 description")
+    }
+
+    var timeBetweenRotations by int(15) {
+        name = TranslatableValue("Time Between Rotations")
+        description = TranslatableValue("Time Between Rotations description")
+        slider = true
+        range = 5..60
+    }
 }

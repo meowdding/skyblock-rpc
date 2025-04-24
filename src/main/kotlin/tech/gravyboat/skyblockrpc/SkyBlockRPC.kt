@@ -12,6 +12,7 @@ import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.base.predicates.OnlyOnSkyBlock
 import tech.thatgravyboat.skyblockapi.api.events.base.predicates.TimePassed
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
+import tech.thatgravyboat.skyblockapi.api.events.profile.ProfileChangeEvent
 import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 
@@ -38,14 +39,22 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
         }
     }
 
+    var skyblockJoin = 0L
+
     @Subscription
-    @TimePassed("8s")
+    fun onProfile(event: ProfileChangeEvent) {
+        skyblockJoin = System.currentTimeMillis()
+    }
+
+    @Subscription
+    @TimePassed("5s")
     @OnlyOnSkyBlock
     fun onTick(event: TickEvent) {
         RPCClient.updateActivity {
             setDetails(Config.line1.getter())
             setState(Config.line2.getter())
             setLargeImage("logo")
+            setStartTimestamp(skyblockJoin)
         }
     }
 }

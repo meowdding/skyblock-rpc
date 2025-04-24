@@ -24,16 +24,26 @@ enum class Element(val example: String, val getter: () -> String) {
     ISLAND_AREA("The End - Auction House", {
         "${LocationAPI.island?.toString() ?: "Unknown"} - ${LocationAPI.area.name}"
     }),
-    ROTATIONAL_1("Rotate between multiple elements", {
-        "todo"
-    }),
-    ROTATIONAL_2("Rotate between multiple elements", {
-        "todo"
-    }),
     CUSTOM_TEXT("Custom Text", {
         Config.customText
+    }),
+    ROTATIONAL_1("Rotate between multiple elements", {
+        getRotation(Config.rotational1.toList()).getter()
+    }),
+    ROTATIONAL_2("Rotate between multiple elements", {
+        getRotation(Config.rotational2.toList()).getter()
     }),
     ;
 
     override fun toString() = example
+
+    companion object {
+        val defaultElements = setOf(PURSE, BITS, BANK, ISLAND, AREA)
+
+        private fun getRotation(elements: List<Element>): Element {
+            val elements = elements.filter { it != ROTATIONAL_1 && it != ROTATIONAL_2 }
+            val index = (System.currentTimeMillis() / 1000 / Config.timeBetweenRotations) % elements.size
+            return elements[index.toInt()]
+        }
+    }
 }
