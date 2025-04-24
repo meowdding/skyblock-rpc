@@ -55,6 +55,9 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
             setState(Config.line2.getter())
             setLargeImage("logo")
             setStartTimestamp(skyblockJoin)
+            Config.buttons.take(2).forEach {
+                addButton(it.toButton())
+            }
         }
     }
 }

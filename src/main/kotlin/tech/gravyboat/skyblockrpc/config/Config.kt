@@ -3,6 +3,7 @@ package tech.gravyboat.skyblockrpc.config
 import com.teamresourceful.resourcefulconfig.api.types.info.ResourcefulConfigLink
 import com.teamresourceful.resourcefulconfig.api.types.options.TranslatableValue
 import com.teamresourceful.resourcefulconfigkt.api.ConfigKt
+import tech.gravyboat.skyblockrpc.Buttons
 import tech.gravyboat.skyblockrpc.Element
 
 object Config : ConfigKt("skyblock-rpc/config") {
@@ -34,8 +35,8 @@ object Config : ConfigKt("skyblock-rpc/config") {
     }
 
     val line2 by enum(Element.ISLAND_AREA) {
-        name = TranslatableValue("Line 1")
-        description = TranslatableValue("Line 1 description")
+        name = TranslatableValue("Line 2")
+        description = TranslatableValue("Line 2 description")
     }
 
     val customText by string("Using SkyBlockRPC") {
@@ -58,5 +59,10 @@ object Config : ConfigKt("skyblock-rpc/config") {
         description = TranslatableValue("Time Between Rotations description")
         slider = true
         range = 5..60
+    }
+
+    val buttons by draggable(*Buttons.entries.toTypedArray()) {
+        name = TranslatableValue("Buttons")
+        description = TranslatableValue("Buttons description")
     }
 }
