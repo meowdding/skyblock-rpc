@@ -29,6 +29,7 @@ object Config : ConfigKt("skyblock-rpc/config") {
             ),
         )
 
+    // todo make these the rotational elements and remove the bottom ones
     val line1 by enum(Element.PURSE) {
         name = TranslatableValue("Line 1")
         description = TranslatableValue("Line 1 description")

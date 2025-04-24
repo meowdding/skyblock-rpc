@@ -5,6 +5,10 @@ import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.api.profile.CurrencyAPI
 import tech.thatgravyboat.skyblockapi.utils.extentions.toFormattedString
 
+// todo:
+//  powder for current location
+//  motes instead of purse in rift, or separate rift config (rather not)
+//
 enum class Element(val example: String, val getter: () -> String) {
     PURSE("Purse: 123,456", {
         "Purse: ${CurrencyAPI.purse.toFormattedString()}"
