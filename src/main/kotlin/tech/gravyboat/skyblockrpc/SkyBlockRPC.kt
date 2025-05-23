@@ -31,9 +31,7 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
     @Subscription
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         event.registerWithCallback("sbrpc") {
-            McClient.tell {
-                McClient.setScreen(ResourcefulConfigScreen.getFactory("sbrpc").apply(null))
-            }
+            McClient.setScreenAsync(ResourcefulConfigScreen.getFactory("sbrpc").apply(null))
         }
     }
 
