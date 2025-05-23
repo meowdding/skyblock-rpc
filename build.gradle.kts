@@ -1,5 +1,7 @@
+import jdk.tools.jlink.resources.plugins
 import org.cadixdev.mercury.shadow.org.eclipse.jdt.core.dom.ModuleModifier.isTransitive
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import sun.tools.jar.resources.jar
 
 plugins {
     java
@@ -20,7 +22,7 @@ dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.21.3:2024.12.07@zip")
+        parchment(libs.parchmentmc.get().toString())
     })
     modImplementation(libs.loader)
     modImplementation(libs.fabrickotlin)
@@ -33,6 +35,7 @@ dependencies {
     modImplementation(libs.rlib)
     modImplementation(libs.olympus)
     modImplementation(libs.discordipc)
+    modImplementation(libs.meowdding.lib)
 
     include(libs.hypixelapi)
     include(libs.skyblockapi)
@@ -40,6 +43,7 @@ dependencies {
     include(libs.rconfigkt) { isTransitive = false }
     include(libs.rlib)
     include(libs.olympus)
+    include(libs.meowdding.lib)
 
     modRuntimeOnly(libs.devauth)
     modRuntimeOnly(libs.modmenu)
