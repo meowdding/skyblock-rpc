@@ -30,11 +30,9 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
 
     @Subscription
     fun onRegisterCommands(event: RegisterCommandsEvent) {
-        event.register("sbrpc") {
-            callback {
-                McClient.tell {
-                    McClient.setScreen(ResourcefulConfigScreen.getFactory("sbrpc").apply(null))
-                }
+        event.registerWithCallback("sbrpc") {
+            McClient.tell {
+                McClient.setScreen(ResourcefulConfigScreen.getFactory("sbrpc").apply(null))
             }
         }
     }
@@ -51,8 +49,8 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
     @OnlyOnSkyBlock
     fun onTick(event: TickEvent) {
         RPCClient.updateActivity {
-            setDetails(Config.line1.getter())
-            setState(Config.line2.getter())
+            setDetails(Element.getRotation(Config.line1.toList()).getter())
+            setState(Element.getRotation(Config.line2.toList()).getter())
             setLargeImage("logo")
             setStartTimestamp(skyblockJoin)
             Config.buttons.take(2).forEach {

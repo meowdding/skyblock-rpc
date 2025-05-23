@@ -30,12 +30,12 @@ object Config : ConfigKt("skyblock-rpc/config") {
         )
 
     // todo make these the rotational elements and remove the bottom ones
-    val line1 by enum(Element.PURSE) {
+    val line1 by draggable(Element.PURSE) {
         name = TranslatableValue("Line 1")
         description = TranslatableValue("Line 1 description")
     }
 
-    val line2 by enum(Element.ISLAND_AREA) {
+    val line2 by draggable(Element.ISLAND_AREA) {
         name = TranslatableValue("Line 2")
         description = TranslatableValue("Line 2 description")
     }
@@ -43,16 +43,6 @@ object Config : ConfigKt("skyblock-rpc/config") {
     val customText by string("Using SkyBlockRPC") {
         name = TranslatableValue("Custom Text")
         description = TranslatableValue("Custom Text description")
-    }
-
-    val rotational1 by draggable(*Element.defaultElements.toTypedArray()) {
-        name = TranslatableValue("Rotational 1")
-        description = TranslatableValue("Rotational 1 description")
-    }
-
-    val rotational2 by draggable(*Element.defaultElements.toTypedArray()) {
-        name = TranslatableValue("Rotational 2")
-        description = TranslatableValue("Rotational 2 description")
     }
 
     var timeBetweenRotations by int(15) {
