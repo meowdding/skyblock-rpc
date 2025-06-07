@@ -9,6 +9,8 @@ import tech.gravyboat.skyblockrpc.SkyBlockRPC
 
 object Config : ConfigKt("skyblock-rpc/config") {
 
+    val config = this
+
     override val name = TranslatableValue("SkyBlock Discord Rich Presence")
     override val description = TranslatableValue("v${SkyBlockRPC.VERSION}")
     override val links: Array<ResourcefulConfigLink> = arrayOf(
