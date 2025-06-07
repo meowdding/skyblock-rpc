@@ -70,6 +70,7 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
     enum class Logo(val id: String, val displayName: String) {
         LOGO_SKY("logo_sky", "Logo with a Sky"),
         LOGO_TRANSPARENT("logo_transparent", "Logo without a Sky"),
+        LOGO_TRANS("logo_trans", "Logo with a transgender flag"),
         ;
 
         override fun toString() = displayName
