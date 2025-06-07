@@ -5,54 +5,49 @@ import com.teamresourceful.resourcefulconfig.api.types.options.TranslatableValue
 import com.teamresourceful.resourcefulconfigkt.api.ConfigKt
 import tech.gravyboat.skyblockrpc.Buttons
 import tech.gravyboat.skyblockrpc.Element
+import tech.gravyboat.skyblockrpc.SkyBlockRPC
 
 object Config : ConfigKt("skyblock-rpc/config") {
 
-    override val name get() = TranslatableValue("SkyBlock Discord Rich Presence")
-    override val description get() = TranslatableValue("Making Modern Pv'able")
-    override val links: Array<ResourcefulConfigLink>
-        get() = arrayOf(
-            ResourcefulConfigLink.create(
-                "https://discord.gg/FsRc2GUwZR",
-                "discord",
-                TranslatableValue("Discord"),
-            ),
-            ResourcefulConfigLink.create(
-                "TODO :3",
-                "modrinth",
-                TranslatableValue("Modrinth"),
-            ),
-            ResourcefulConfigLink.create(
-                "https://github.com/meowdding/skyblock-rpc",
-                "code",
-                TranslatableValue("GitHub"),
-            ),
-        )
+    override val name = TranslatableValue("SkyBlock Discord Rich Presence")
+    override val description = TranslatableValue("v${SkyBlockRPC.VERSION}")
+    override val links: Array<ResourcefulConfigLink> = arrayOf(
+        ResourcefulConfigLink.create(
+            "https://discord.gg/FsRc2GUwZR",
+            "discord",
+            TranslatableValue("Discord"),
+        ),
+        ResourcefulConfigLink.create(
+            "TODO :3",
+            "modrinth",
+            TranslatableValue("Modrinth"),
+        ),
+        ResourcefulConfigLink.create(
+            "https://github.com/meowdding/skyblock-rpc",
+            "code",
+            TranslatableValue("GitHub"),
+        ),
+    )
 
-    val line1 by draggable(Element.PURSE) {
-        name = TranslatableValue("Line 1")
-        description = TranslatableValue("Line 1 description")
+    val primaryLine by draggable(Element.PURSE) {
+        translation = "skyblockrpc.config.primary_line"
     }
 
-    val line2 by draggable(Element.ISLAND_AREA) {
-        name = TranslatableValue("Line 2")
-        description = TranslatableValue("Line 2 description")
+    val secondaryLine by draggable(Element.ISLAND_AREA) {
+        translation = "skyblockrpc.config.secondary_line"
     }
 
     val customText by string("Using SkyBlockRPC") {
-        name = TranslatableValue("Custom Text")
-        description = TranslatableValue("Custom Text description")
+        translation = "skyblockrpc.config.custom_text"
     }
 
     var timeBetweenRotations by int(15) {
-        name = TranslatableValue("Time Between Rotations")
-        description = TranslatableValue("Time Between Rotations description")
+        translation = "skyblockrpc.config.time_between_rotations"
         slider = true
         range = 5..60
     }
 
     val buttons by draggable(*Buttons.entries.toTypedArray()) {
-        name = TranslatableValue("Buttons")
-        description = TranslatableValue("Buttons description")
+        translation = "skyblockrpc.config.buttons"
     }
 }

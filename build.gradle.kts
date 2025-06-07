@@ -1,7 +1,4 @@
-import jdk.tools.jlink.resources.plugins
-import org.cadixdev.mercury.shadow.org.eclipse.jdt.core.dom.ModuleModifier.isTransitive
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import sun.tools.jar.resources.jar
 
 plugins {
     java

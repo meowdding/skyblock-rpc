@@ -37,7 +37,10 @@ enum class Element(val example: String, val getter: () -> String) {
     override fun toString() = example
 
     companion object {
-        fun getRotation(elements: List<Element>): Element {
+        fun getPrimaryLine() = getRotation(Config.primaryLine.toList()).getter()
+        fun getSecondaryLine() = getRotation(Config.secondaryLine.toList()).getter()
+
+        private fun getRotation(elements: List<Element>): Element {
             val index = (System.currentTimeMillis() / 1000 / Config.timeBetweenRotations) % elements.size
             return elements[index.toInt()]
         }

@@ -10,4 +10,5 @@ enum class Buttons(val label: String, val url: Lazy<String>) {
     ;
 
     fun toButton() = RichPresenceButton(url.value, label)
+    override fun toString() = label
 }
