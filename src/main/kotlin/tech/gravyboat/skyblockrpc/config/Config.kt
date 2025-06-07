@@ -50,4 +50,8 @@ object Config : ConfigKt("skyblock-rpc/config") {
     val buttons by draggable(*Buttons.entries.toTypedArray()) {
         translation = "skyblockrpc.config.buttons"
     }
+
+    val logo by enum(SkyBlockRPC.Logo.LOGO_TRANSPARENT) {
+        translation = "skyblockrpc.config.logo"
+    }
 }

@@ -8,6 +8,7 @@
     "contact": { },
     "license": "All-Rights-Reserved",
     "environment": "client",
+    "icon": "assets/skyblock-rpc/logo/logo_sky.png",
     "entrypoints": {
         "main": [
             {
@@ -18,6 +19,7 @@
     },
     "depends": {
         "fabric": "*",
-        "minecraft": "1.21.5"
+        "minecraft": "1.21.5",
+        "fabric-language-kotlin": ">=1.12.3"
     }
 }

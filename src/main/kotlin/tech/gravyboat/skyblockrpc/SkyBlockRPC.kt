@@ -59,11 +59,19 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
         RPCClient.updateActivity {
             setDetails(Element.getPrimaryLine())
             setState(Element.getSecondaryLine())
-            setLargeImage("logo", "Using SkyBlockRPC v$VERSION")
+            setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION")
             setStartTimestamp(skyblockJoin)
             Config.buttons.take(2).forEach {
                 addButton(it.toButton())
             }
         }
+    }
+
+    enum class Logo(val id: String, val displayName: String) {
+        LOGO_SKY("logo_sky", "Logo with a Sky"),
+        LOGO_TRANSPARENT("logo_transparent", "Logo without a Sky"),
+        ;
+
+        override fun toString() = displayName
     }
 }

@@ -36,6 +36,10 @@
         "The buttons that are displayed in the rich presence.",
         "You can add up to two buttons; if more are added, it will take the first two."
       ]
+    },
+    "logo": {
+      "@value": "Logo",
+      "desc": "The logo that is displayed in the rich presence."
     }
   }
 }
