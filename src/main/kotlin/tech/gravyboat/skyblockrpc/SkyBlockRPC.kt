@@ -59,7 +59,7 @@ object SkyBlockRPC : ModInitializer, Logger by LoggerFactory.getLogger("SkyBlock
         RPCClient.updateActivity {
             setDetails(Element.getPrimaryLine())
             setState(Element.getSecondaryLine())
-            setLargeImage(Config.config.config.config.config.config.config.logo.id, "Using SkyBlockRPC v$VERSION")
+            setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION")
             setStartTimestamp(skyblockJoin)
             Config.buttons.take(2).forEach {
                 addButton(it.toButton())
