@@ -20,6 +20,7 @@ import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.profile.ProfileChangeEvent
 import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.utils.text.CommonText
 import tech.thatgravyboat.skyblockapi.utils.text.Text
 import tech.thatgravyboat.skyblockapi.utils.text.Text.send
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
@@ -54,7 +55,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
         }
 
         McClient.tell {
-            Text.of().send()
+            CommonText.EMPTY.send()
             Text.join(
                 "New version found! (",
                 Text.of(current).withColor(TextColor.RED),
@@ -63,7 +64,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
                 ")",
             ).withLink().sendWithPrefix()
             Text.of("Click to download.").withLink().sendWithPrefix()
-            Text.of().send()
+            CommonText.EMPTY.send()
         }
     }
 
