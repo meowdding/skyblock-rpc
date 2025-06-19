@@ -1,11 +1,11 @@
-package tech.gravyboat.skyblockrpc.config
+package me.owdding.skyblockrpc.config
 
 import com.teamresourceful.resourcefulconfig.api.types.info.ResourcefulConfigLink
 import com.teamresourceful.resourcefulconfig.api.types.options.TranslatableValue
 import com.teamresourceful.resourcefulconfigkt.api.ConfigKt
-import tech.gravyboat.skyblockrpc.Buttons
-import tech.gravyboat.skyblockrpc.Element
-import tech.gravyboat.skyblockrpc.SkyBlockRPC
+import me.owdding.skyblockrpc.Buttons
+import me.owdding.skyblockrpc.Element
+import me.owdding.skyblockrpc.SkyBlockRPC
 
 object Config : ConfigKt("skyblock-rpc/config") {
 

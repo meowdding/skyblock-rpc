@@ -1,16 +1,16 @@
-package tech.gravyboat.skyblockrpc
+package me.owdding.skyblockrpc
 
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import me.owdding.lib.utils.MeowddingUpdateChecker
+import me.owdding.skyblockrpc.config.Config
+import me.owdding.skyblockrpc.rpc.RPCClient
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import tech.gravyboat.skyblockrpc.config.Config
-import tech.gravyboat.skyblockrpc.rpc.RPCClient
 import tech.thatgravyboat.skyblockapi.api.SkyBlockAPI
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.base.predicates.OnlyOnSkyBlock

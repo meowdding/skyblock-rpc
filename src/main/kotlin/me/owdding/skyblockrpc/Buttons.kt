@@ -1,4 +1,4 @@
-package tech.gravyboat.skyblockrpc
+package me.owdding.skyblockrpc
 
 import com.jagrosh.discordipc.entities.RichPresenceButton
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer

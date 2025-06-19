@@ -1,6 +1,6 @@
-package tech.gravyboat.skyblockrpc
+package me.owdding.skyblockrpc
 
-import tech.gravyboat.skyblockrpc.config.Config
+import me.owdding.skyblockrpc.config.Config
 import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.api.location.SkyBlockIsland
 import tech.thatgravyboat.skyblockapi.api.profile.CurrencyAPI

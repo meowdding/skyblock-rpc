@@ -10,10 +10,10 @@
     "environment": "client",
     "icon": "assets/skyblock-rpc/logo/logo_sky.png",
     "entrypoints": {
-        "main": [
+        "client": [
             {
                 "adapter": "kotlin",
-                "value": "tech.gravyboat.skyblockrpc.SkyBlockRPC"
+                "value": "me.owdding.skyblockrpc.SkyBlockRPC"
             }
         ]
     },
