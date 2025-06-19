@@ -18,7 +18,7 @@ object Config : ConfigKt("skyblock-rpc/config") {
             TranslatableValue("Discord"),
         ),
         ResourcefulConfigLink.create(
-            "TODO :3",
+            "https://modrinth.com/mod/skyblock-rpc",
             "modrinth",
             TranslatableValue("Modrinth"),
         ),
