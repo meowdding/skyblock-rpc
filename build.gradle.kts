@@ -40,6 +40,7 @@ dependencies {
     include(libs.rconfigkt) { isTransitive = false }
     include(libs.rlib)
     include(libs.olympus)
+    include(libs.discordipc)
     include(libs.meowdding.lib)
 
     modRuntimeOnly(libs.devauth)
