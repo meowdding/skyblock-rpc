@@ -39,10 +39,6 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 
-dependencies {
-    //ksp(libs.meowdding.ktmodules)
-}
-
 cloche {
     metadata {
         modId = "skyblockrpc"
@@ -54,8 +50,6 @@ cloche {
 
     common {
         dependencies {
-            //compileOnly(libs.meowdding.ktmodules)
-
             modImplementation(libs.hypixelapi)
             modImplementation(libs.skyblockapi)
 
@@ -174,8 +168,6 @@ java {
 
 
 ksp {
-    //arg("meowdding.modules.project_name", "SkyBlockRPC")
-    //arg("meowdding.modules.package", "me.owdding.skyblockrpc.generated")
     this@ksp.excludedSources.from(sourceSets.getByName("1215").kotlin.srcDirs)
     this@ksp.excludedSources.from(sourceSets.getByName("1217").kotlin.srcDirs)
 }
