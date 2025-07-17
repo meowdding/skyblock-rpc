@@ -29,7 +29,8 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.url
 
 object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("SkyBlockRPC") {
 
-    val SELF = FabricLoader.getInstance().getModContainer("skyblockrpc").get()
+    val MOD_ID = "skyblockrpc"
+    val SELF = FabricLoader.getInstance().getModContainer(MOD_ID).get()
     val VERSION: String = SELF.metadata.version.friendlyString
 
     val prefix = Text.join(
@@ -38,7 +39,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
         Text.of("] ").withColor(TextColor.GRAY),
     )
 
-    val configurator = Configurator("sbrpc")
+    val configurator = Configurator(MOD_ID)
 
     override fun onInitializeClient() {
         Config.register(configurator)
@@ -74,7 +75,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
             callback {
-                McClient.setScreenAsync { ResourcefulConfigScreen.getFactory("sbrpc").apply(null) }
+                McClient.setScreenAsync { ResourcefulConfigScreen.getFactory(MOD_ID).apply(null) }
             }
         }
 
