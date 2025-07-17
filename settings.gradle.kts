@@ -2,7 +2,7 @@ rootProject.name = "SkyBlockRPC"
 
 pluginManagement {
     repositories {
-        maven("https://maven.fabricmc.net/")
+        maven(url = "https://maven.teamresourceful.com/repository/msrandom/")
         gradlePluginPortal()
     }
 }

@@ -54,7 +54,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
             this.hover = Text.of(link).withColor(TextColor.GRAY)
         }
 
-        McClient.tell {
+        McClient.runNextTick {
             CommonText.EMPTY.send()
             Text.join(
                 "New version found! (",
@@ -74,7 +74,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
             callback {
-                McClient.setScreenAsync(ResourcefulConfigScreen.getFactory("sbrpc").apply(null))
+                McClient.setScreenAsync { ResourcefulConfigScreen.getFactory("sbrpc").apply(null) }
             }
         }
 
