@@ -60,7 +60,6 @@ cloche {
             modImplementation(libs.skyblockapi)
             modImplementation(libs.meowdding.lib)
 
-            modRuntimeOnly(libs.devauth)
             //modRuntimeOnly(libs.modmenu)
         }
     }
@@ -126,9 +125,9 @@ cloche {
         this["resourcefullib"] = libs.resourceful.lib1215
         this["resourcefulconfig"] = libs.resourceful.config1215
     }
-    createVersion("1.21.7") {
-        this["resourcefullib"] = libs.resourceful.lib1217
-        this["resourcefulconfig"] = libs.resourceful.config1217
+    createVersion("1.21.8") {
+        this["resourcefullib"] = libs.resourceful.lib1218
+        this["resourcefulconfig"] = libs.resourceful.config1218
     }
 
     mappings { official() }
@@ -169,5 +168,5 @@ java {
 
 ksp {
     this@ksp.excludedSources.from(sourceSets.getByName("1215").kotlin.srcDirs)
-    this@ksp.excludedSources.from(sourceSets.getByName("1217").kotlin.srcDirs)
+    this@ksp.excludedSources.from(sourceSets.getByName("1218").kotlin.srcDirs)
 }
