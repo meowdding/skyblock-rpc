@@ -32,7 +32,7 @@ enum class Element(val example: String, val getter: () -> String) {
         "${LocationAPI.island?.toString() ?: "Unknown"} - ${LocationAPI.area.name}"
     }),
     HELD_ITEM("Holding: Aspect of the End", {
-        "Holding: ${McPlayer.heldItem.takeIf { !it.isEmpty }?.cleanName ?: "Nothing"}"
+        "Holding: ${McPlayer.heldItem.takeUnless { it.isEmpty }?.cleanName ?: "Nothing"}"
     }),
     CUSTOM_TEXT("Custom Text", {
         Config.customText
