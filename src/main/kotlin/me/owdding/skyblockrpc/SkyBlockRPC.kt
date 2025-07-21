@@ -13,11 +13,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tech.thatgravyboat.skyblockapi.api.SkyBlockAPI
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
-import tech.thatgravyboat.skyblockapi.api.events.base.predicates.OnlyOnSkyBlock
 import tech.thatgravyboat.skyblockapi.api.events.base.predicates.TimePassed
 import tech.thatgravyboat.skyblockapi.api.events.misc.LiteralCommandBuilder
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
-import tech.thatgravyboat.skyblockapi.api.events.profile.ProfileChangeEvent
 import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.text.CommonText
@@ -83,22 +81,26 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
         event.register("skyblockrpc") { rpcCommand() }
     }
 
-    var skyblockJoin = 0L
-
-    @Subscription
-    fun onProfile(event: ProfileChangeEvent) {
-        skyblockJoin = System.currentTimeMillis()
-    }
+    var skyblockJoin: Long? = null
 
     @Subscription
     @TimePassed("5s")
-    @OnlyOnSkyBlock
     fun onTick(event: TickEvent) {
+        if (!SkyBlockAPI.isOnSkyBlock()) {
+            RPCClient.stop()
+            skyblockJoin = null
+            return
+        }
+
+        if (skyblockJoin == null) {
+            skyblockJoin = System.currentTimeMillis()
+        }
+
         RPCClient.updateActivity {
             setDetails(Element.getPrimaryLine())
             setState(Element.getSecondaryLine())
             setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION")
-            setStartTimestamp(skyblockJoin)
+            setStartTimestamp(skyblockJoin!!)
             Config.buttons.take(2).forEach {
                 addButton(it.toButton())
             }
