@@ -51,7 +51,7 @@ cloche {
         name = "SkyBlockRPC"
         license = ""
         clientOnly = true
-        icon = "assets/skyblock-rpc/logo/logo_sky.png"
+        icon = "assets/skyblockrpc/logo/logo_sky.png"
     }
 
     common {
@@ -96,6 +96,7 @@ cloche {
             include(libs.meowdding.lib)
             include(rlib)
             include(rconfig)
+            include(libs.discordipc)
             include(libs.resourcefulkt.config)
 
             metadata {
@@ -120,6 +121,8 @@ cloche {
                     version(minecraftVersionRange)
                 }
                 dependency("fabric")
+                dependency("resourcefulconfigkt", libs.versions.rconfigkt)
+                dependency("resourcefulconfig", rconfig.map { it.version!! })
                 dependency("fabricloader", libs.versions.fabric.loader)
                 dependency("fabric-language-kotlin", libs.versions.fabric.language.kotlin)
                 dependency("resourcefullib", rlib.map { it.version!! })

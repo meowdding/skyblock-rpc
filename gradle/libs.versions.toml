@@ -10,6 +10,8 @@ kotlin-symbol-processor = "2.1.20-2.0.0"
 skyblockapi = "2.1.2"
 hypixelapi = "1.0.1+build.1+mc1.21"
 
+rconfigkt = "3.5.12"
+
 meowdding-lib = "2.1.4"
 
 terrarium-cloche = "0.11.6"
@@ -27,7 +29,7 @@ resourceful-lib1215 = { module = "com.teamresourceful.resourcefullib:resourceful
 resourceful-lib1218 = { module = "com.teamresourceful.resourcefullib:resourcefullib-fabric-1.21.6", version = "3.6.0" }
 resourceful-config1215 = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.5", version = "3.5.14" }
 resourceful-config1218 = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.7", version = "3.7.0" }
-resourcefulkt-config = { module = "com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5", version = "3.5.12" }
+resourcefulkt-config = { module = "com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5", version.ref = "rconfigkt" }
 
 meowdding-lib = { module = "me.owdding.meowdding-lib:meowdding-lib", version.ref = "meowdding-lib" }
 
