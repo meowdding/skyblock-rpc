@@ -5,15 +5,10 @@ import net.msrandom.minecraftcodev.core.utils.toPath
 import net.msrandom.minecraftcodev.fabric.task.JarInJar
 import net.msrandom.minecraftcodev.runs.task.WriteClasspathFile
 import net.msrandom.stubs.GenerateStubApi
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 
 plugins {
     java
@@ -51,7 +46,7 @@ cloche {
         name = "SkyBlockRPC"
         license = ""
         clientOnly = true
-        icon = "assets/skyblockrpc/logo/logo_sky.png"
+        icon = "assets/skyblockrpc/logo/logo_sky_big.png"
     }
 
     common {
@@ -92,7 +87,7 @@ cloche {
             this.loaderVersion = loaderVersion.get()
 
             //include(libs.hypixelapi) - included in sbapi
-            //include(libs.skyblockapi) - included in mlib
+            include(libs.skyblockapi)
             include(libs.meowdding.lib)
             include(rlib)
             include(rconfig)
@@ -218,5 +213,9 @@ tasks.register("cleanRelease") {
 
 tasks.withType<JarInJar>().configureEach {
     include { !it.name.endsWith("-dev.jar") }
+
+    doFirst {
+        includedJarInfo.set(includedJarInfo.map { it.onEach { jar -> jar.moduleName.set(jar.moduleName.map { name -> name.lowercase() }.get()) } }.get())
+    }
 }
 
