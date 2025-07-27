@@ -40,12 +40,46 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
     val configurator = Configurator(MOD_ID)
 
+    var skyblockJoin: Long? = null
+
     override fun onInitializeClient() {
         Config.register(configurator)
         MeowddingUpdateChecker("qESHWJ0N", SELF, ::sendUpdateMessage)
         SkyBlockAPI.eventBus.register(this)
+    }
 
-        RPCClient.start()
+    @Subscription
+    @TimePassed("1s")
+    fun onTick(event: TickEvent) {
+        if (!LocationAPI.isOnSkyBlock) {
+            RPCClient.stop()
+            skyblockJoin = null
+            return
+        }
+
+        if (skyblockJoin == null) {
+            skyblockJoin = System.currentTimeMillis()
+            RPCClient.start()
+        }
+
+        RPCClient.updateActivity {
+            setDetails(Element.getPrimaryLine())
+            setState(Element.getSecondaryLine())
+            setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION")
+            setStartTimestamp(skyblockJoin!!)
+            Config.buttons.take(2).forEach {
+                addButton(it.toButton())
+            }
+        }
+    }
+
+    enum class Logo(val id: String, val displayName: String) {
+        LOGO_SKY("logo_sky", "Logo with a Sky"),
+        LOGO_TRANSPARENT("logo_transparent", "Logo without a Sky"),
+        LOGO_TRANS("logo_trans", "Logo with a transgender flag"),
+        ;
+
+        override fun toString() = displayName
     }
 
     fun sendUpdateMessage(link: String, current: String, new: String) {
@@ -80,40 +114,5 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
         event.register("sbrpc") { rpcCommand() }
         event.register("skyblockrpc") { rpcCommand() }
-    }
-
-    var skyblockJoin: Long? = null
-
-    @Subscription
-    @TimePassed("5s")
-    fun onTick(event: TickEvent) {
-        if (!LocationAPI.isOnSkyBlock) {
-            RPCClient.stop()
-            skyblockJoin = null
-            return
-        }
-
-        if (skyblockJoin == null) {
-            skyblockJoin = System.currentTimeMillis()
-        }
-
-        RPCClient.updateActivity {
-            setDetails(Element.getPrimaryLine())
-            setState(Element.getSecondaryLine())
-            setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION")
-            setStartTimestamp(skyblockJoin!!)
-            Config.buttons.take(2).forEach {
-                addButton(it.toButton())
-            }
-        }
-    }
-
-    enum class Logo(val id: String, val displayName: String) {
-        LOGO_SKY("logo_sky", "Logo with a Sky"),
-        LOGO_TRANSPARENT("logo_transparent", "Logo without a Sky"),
-        LOGO_TRANS("logo_trans", "Logo with a transgender flag"),
-        ;
-
-        override fun toString() = displayName
     }
 }
