@@ -1,13 +1,13 @@
 [versions]
 
 fabric-loader = "0.16.10"
-fabric-language-kotlin = "1.13.0+kotlin.2.1.0"
+fabric-language-kotlin = "1.13.4+kotlin.2.2.0"
 fabric-api = "0.128.1"
 
-kotlin-symbol-processor = "2.1.20-2.0.0"
+kotlin-symbol-processor = "2.2.0-2.0.2"
 
 # Dependencies
-skyblockapi = "2.1.2"
+skyblockapi = "2.3.0"
 hypixelapi = "1.0.1+build.1+mc1.21"
 
 rconfigkt = "3.5.12"
@@ -27,8 +27,8 @@ hypixelapi = { module = "maven.modrinth:hypixel-mod-api", version.ref = "hypixel
 
 resourceful-lib1215 = { module = "com.teamresourceful.resourcefullib:resourcefullib-fabric-1.21.5", version = "3.5.0" }
 resourceful-lib1218 = { module = "com.teamresourceful.resourcefullib:resourcefullib-fabric-1.21.6", version = "3.6.0" }
-resourceful-config1215 = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.5", version = "3.5.14" }
-resourceful-config1218 = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.7", version = "3.7.0" }
+resourceful-config1215 = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.5", version = "3.5.15" }
+resourceful-config1218 = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-1.21.7", version = "3.7.1" }
 resourcefulkt-config = { module = "com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-fabric-1.21.5", version.ref = "rconfigkt" }
 
 meowdding-lib = { module = "me.owdding.meowdding-lib:meowdding-lib", version.ref = "meowdding-lib" }
