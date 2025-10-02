@@ -27,6 +27,9 @@ repositories {
     maven(url = "https://maven.nucleoid.xyz")
     mavenCentral()
     mavenLocal()
+    cloche {
+        mavenFabric()
+    }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -88,12 +91,7 @@ cloche {
             this.loaderVersion = loaderVersion.get()
 
             //include(libs.hypixelapi) - included in sbapi
-            include(libs.skyblockapi)
-            include(libs.meowdding.lib)
-            include(rlib)
-            include(rconfig)
-            include(libs.discordipc)
-            include(libs.resourcefulkt.config)
+
 
             metadata {
                 entrypoint("client") {
@@ -128,8 +126,16 @@ cloche {
 
             dependencies {
                 fabricApi(fabricApiVersion, minecraftVersion)
-                modImplementation(rconfig)
-                modImplementation(libs.resourcefulkt.config)
+                modImplementation(rconfig) { isTransitive = false }
+                modImplementation(rlib) { isTransitive = false }
+                modImplementation(libs.resourcefulkt.config) { isTransitive = false }
+
+                include(libs.skyblockapi)
+                include(libs.meowdding.lib)
+                include(rlib)
+                include(rconfig)
+                include(libs.discordipc)
+                include(libs.resourcefulkt.config)
             }
 
             runs {
@@ -144,9 +150,15 @@ cloche {
     }
     createVersion("1.21.8", minecraftVersionRange = {
         start = "1.21.6"
+        end = "1.21.8"
+        endExclusive = false
     }) {
         this["resourcefullib"] = libs.resourceful.lib1218
         this["resourcefulconfig"] = libs.resourceful.config1218
+    }
+    createVersion("1.21.9", fabricApiVersion = provider { "0.133.7" }) {
+        this["resourcefullib"] = libs.resourceful.lib1219
+        this["resourcefulconfig"] = libs.resourceful.config1219
     }
 
     mappings { official() }
