@@ -116,7 +116,7 @@ cloche {
                 }
                 dependency("fabric")
                 dependency("resourcefulconfigkt", libs.versions.rconfigkt)
-                //dependency("resourcefulconfig", rconfig.map { it.version!! })
+                dependency("resourcefulconfig", rconfig.map { it.version!! })
                 dependency("fabricloader", libs.versions.fabric.loader)
                 dependency("fabric-language-kotlin", libs.versions.fabric.language.kotlin)
                 dependency("resourcefullib", rlib.map { it.version!! })
@@ -126,8 +126,9 @@ cloche {
 
             dependencies {
                 fabricApi(fabricApiVersion, minecraftVersion)
-                modImplementation(rconfig)
-                modImplementation(libs.resourcefulkt.config)
+                modImplementation(rconfig) { isTransitive = false }
+                modImplementation(rlib) { isTransitive = false }
+                modImplementation(libs.resourcefulkt.config) { isTransitive = false }
 
                 include(libs.skyblockapi)
                 include(libs.meowdding.lib)
