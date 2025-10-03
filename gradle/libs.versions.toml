@@ -7,12 +7,12 @@ fabric-api = "0.133.4"
 kotlin-symbol-processor = "2.2.0-2.0.2"
 
 # Dependencies
-skyblockapi = "3.0.2"
+skyblockapi = "3.0.4"
 hypixelapi = "1.0.1+build.1+mc1.21"
 
 rconfigkt = "3.5.12"
 
-meowdding-lib = "3.0.2"
+meowdding-lib = "3.0.3"
 
 terrarium-cloche = "0.13.5"
 
