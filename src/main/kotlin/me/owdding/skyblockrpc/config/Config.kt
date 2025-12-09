@@ -54,4 +54,8 @@ object Config : ConfigKt("skyblock-rpc/config") {
     val logo by enum(SkyBlockRPC.Logo.LOGO_TRANSPARENT) {
         translation = "skyblockrpc.config.logo"
     }
+
+    val clientId by string("1356650867939475756") {
+        translation = "skyblockrpc.config.client_id"
+    }
 }

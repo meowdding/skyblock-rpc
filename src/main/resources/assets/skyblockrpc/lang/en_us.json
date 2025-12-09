@@ -1,45 +1,53 @@
 {
-  "@meowdding:metadata": {
-    "allowMultiline": true,
-    "allowReferences": true,
-    "allowTags": true,
-    "objectAsKeys": true,
-    "prefix": "skyblockrpc"
-  },
-  "@value": "SkyBlock RPC",
-  "config": {
-    "primary_line": {
-      "@value": "Primary Line",
-      "desc": [
-        "The primary line of the RPC, which is displayed in the first line of the rich presence.",
-        "Enabling multiple lines will rotate through them."
-      ]
+    "@meowdding:metadata": {
+        "allowMultiline": true,
+        "allowReferences": true,
+        "allowTags": true,
+        "objectAsKeys": true,
+        "prefix": "skyblockrpc"
     },
-    "secondary_line": {
-      "@value": "Secondary Line",
-      "desc": [
-        "The secondary line of the RPC, which is displayed in the second line of the rich presence.",
-        "Enabling multiple lines will rotate through them."
-      ]
-    },
-    "custom_text": {
-      "@value": "Custom Text",
-      "desc": "The text that gets displayed when \"Custom Text\" is selected as a line."
-    },
-    "time_between_rotations": {
-      "@value": "Time Between Rotations",
-      "desc": "The time in seconds between each rotation of the primary and secondary lines."
-    },
-    "buttons": {
-      "@value": "Buttons",
-      "desc": [
-        "The buttons that are displayed in the rich presence.",
-        "You can add up to two buttons; if more are added, it will take the first two."
-      ]
-    },
-    "logo": {
-      "@value": "Logo",
-      "desc": "The logo that is displayed in the rich presence."
+    "@value": "SkyBlock RPC",
+    "config": {
+        "primary_line": {
+            "@value": "Primary Line",
+            "desc": [
+                "The primary line of the RPC, which is displayed in the first line of the rich presence.",
+                "Enabling multiple lines will rotate through them."
+            ]
+        },
+        "secondary_line": {
+            "@value": "Secondary Line",
+            "desc": [
+                "The secondary line of the RPC, which is displayed in the second line of the rich presence.",
+                "Enabling multiple lines will rotate through them."
+            ]
+        },
+        "custom_text": {
+            "@value": "Custom Text",
+            "desc": "The text that gets displayed when \"Custom Text\" is selected as a line."
+        },
+        "time_between_rotations": {
+            "@value": "Time Between Rotations",
+            "desc": "The time in seconds between each rotation of the primary and secondary lines."
+        },
+        "buttons": {
+            "@value": "Buttons",
+            "desc": [
+                "The buttons that are displayed in the rich presence.",
+                "You can add up to two buttons; if more are added, it will take the first two."
+            ]
+        },
+        "logo": {
+            "@value": "Logo",
+            "desc": "The logo that is displayed in the rich presence."
+        },
+        "clientId": {
+            "@value": "Client ID",
+            "desc": [
+                "The Client ID used for the Discord Rich Presence.",
+                "<red>Don't change this unless you know what you're doing!</red>",
+                "Needs a restart to take effect."
+            ]
+        }
     }
-  }
 }
