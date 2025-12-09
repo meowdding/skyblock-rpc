@@ -107,6 +107,19 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     @Subscription
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
+            thenCallback("text text", StringArgumengType.greedyString()) {
+                Config.customText = it.getArgument("text", String::class.java)
+                Text.of("Set custom text to: ") {
+                    color = TextColor.GRAY
+                    append(
+                        "\"${Config.customText}\"" {
+                            )
+                            color = TextColor.AQUA
+                        }
+                    )
+                }.sendWithPrefix()
+            }
+
             callback {
                 McClient.setScreenAsync { ResourcefulConfigScreen.getFactory(MOD_ID).apply(null) }
             }

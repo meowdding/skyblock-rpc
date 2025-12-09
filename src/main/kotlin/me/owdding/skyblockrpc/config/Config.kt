@@ -37,7 +37,7 @@ object Config : ConfigKt("skyblock-rpc/config") {
         translation = "skyblockrpc.config.secondary_line"
     }
 
-    val customText by string("Using SkyBlockRPC") {
+    var customText by string("Using SkyBlockRPC") {
         translation = "skyblockrpc.config.custom_text"
     }
 
