@@ -54,6 +54,7 @@ cloche {
     }
 
     common {
+        accessWideners.from(project.layout.projectDirectory.file("src/main/skyblock-rpc.accesswidener"))
         dependencies {
             modImplementation(libs.hypixelapi)
             modImplementation(libs.skyblockapi)
@@ -235,3 +236,13 @@ tasks.withType<JarInJar>().configureEach {
     }
 }
 
+
+val mcVersions = sourceSets.filterNot { it.name == SourceSet.MAIN_SOURCE_SET_NAME || it.name == SourceSet.TEST_SOURCE_SET_NAME }.map { it.name }
+tasks.register("setupForWorkflows") {
+    mcVersions.flatMap {
+        listOf("remap${it}CommonMinecraftNamed", "remap${it}ClientMinecraftNamed")
+    }.mapNotNull { tasks.findByName(it) }.forEach {
+        dependsOn(it)
+        mustRunAfter(it)
+    }
+}

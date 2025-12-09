@@ -4,6 +4,7 @@ import com.teamresourceful.resourcefulconfig.api.types.info.ResourcefulConfigLin
 import com.teamresourceful.resourcefulconfig.api.types.options.TranslatableValue
 import com.teamresourceful.resourcefulconfigkt.api.ConfigKt
 import me.owdding.skyblockrpc.Buttons
+import me.owdding.skyblockrpc.DynamicElement
 import me.owdding.skyblockrpc.Element
 import me.owdding.skyblockrpc.SkyBlockRPC
 
@@ -35,6 +36,10 @@ object Config : ConfigKt("skyblock-rpc/config") {
 
     val secondaryLine by draggable(Element.ISLAND_AREA) {
         translation = "skyblockrpc.config.secondary_line"
+    }
+
+    val dynamicPriority by draggable(*DynamicElement.entries.toTypedArray()) {
+        translation = "skyblockrpc.config.dynamic_priority"
     }
 
     var customText by string("Using SkyBlockRPC") {
