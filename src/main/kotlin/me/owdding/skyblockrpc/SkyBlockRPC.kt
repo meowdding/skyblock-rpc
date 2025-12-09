@@ -111,12 +111,9 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
                 Config.customText = it.getArgument("text", String::class.java)
                 Text.of("Set custom text to: ") {
                     color = TextColor.GRAY
-                    append(
-                        "\"${Config.customText}\"" {
-                            )
-                            color = TextColor.AQUA
-                        }
-                    )
+                    append("\"${Config.customText}\"") {
+                        color = TextColor.AQUA
+                    }
                 }.sendWithPrefix()
             }
 
