@@ -1,0 +1,27 @@
+{
+    "schemaVersion": 1,
+    "id": "skyblockrpc",
+    "version": "${version}",
+    "name": "SkyBlockRPC",
+    "license": "",
+    "icon": "assets/skyblockrpc/logo/logo_sky_big.png",
+    "entrypoints": {
+        "client": [
+            {
+                "value": "me.owdding.skyblockrpc.SkyBlockRPC",
+                "adapter": "kotlin"
+            }
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.16.10",
+        "minecraft": ">=${minecraft_start} <=${minecraft_end}",
+        "fabric": "*",
+        "resourcefulconfigkt": ">=${rconfigkt}",
+        "resourcefulconfig": ">=${rconfig}",
+        "fabric-language-kotlin": ">=${fabric_lang_kotlin}",
+        "resourcefullib": ">=${rlib}",
+        "skyblock-api": ">=${sbapi}",
+        "meowdding-lib": ">=${mlib}"
+    }
+}

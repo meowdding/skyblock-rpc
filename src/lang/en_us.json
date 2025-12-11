@@ -41,7 +41,7 @@
             "@value": "Logo",
             "desc": "The logo that is displayed in the rich presence."
         },
-        "clientId": {
+        "client_id": {
             "@value": "Client ID",
             "desc": [
                 "The Client ID used for the Discord Rich Presence.",
