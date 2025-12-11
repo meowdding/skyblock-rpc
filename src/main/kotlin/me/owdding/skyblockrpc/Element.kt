@@ -34,6 +34,12 @@ enum class Element(val example: String, val getter: () -> String) {
     HELD_ITEM("Holding: Aspect of the End", {
         "Holding: ${McPlayer.heldItem.takeUnless { it.isEmpty }?.cleanName ?: "Nothing"}"
     }),
+    DYNAMIC(
+        "Dynamic Element",
+        {
+            DynamicElement.getElement() ?: "No Dynamic Element"
+        },
+    ),
     CUSTOM_TEXT("Custom Text", {
         Config.customText
     }),
