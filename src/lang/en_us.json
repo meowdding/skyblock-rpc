@@ -8,6 +8,10 @@
     },
     "@value": "SkyBlock RPC",
     "config": {
+        "client_id": {
+            "@value": "Client Id",
+            "desc": "The client id to use for discord."
+        },
         "primary_line": {
             "@value": "Primary Line",
             "desc": [

@@ -5,6 +5,7 @@ import com.jagrosh.discordipc.IPCClient
 import com.jagrosh.discordipc.IPCListener
 import com.jagrosh.discordipc.entities.RichPresence
 import com.jagrosh.discordipc.entities.pipe.PipeStatus
+import me.owdding.skyblockrpc.config.Config
 import java.util.concurrent.CompletableFuture
 
 object RPCClient {
@@ -15,7 +16,7 @@ object RPCClient {
         if (client?.status == PipeStatus.CONNECTED) return
 
         CompletableFuture.runAsync {
-            client = IPCClient(Config.clientId).also {
+            client = IPCClient(Config.clientId.toLong()).also {
                 it.setListener(object : IPCListener {
                     override fun onClose(client: IPCClient?, json: JsonObject?) = stop()
                     override fun onDisconnect(client: IPCClient?, t: Throwable?) = stop()

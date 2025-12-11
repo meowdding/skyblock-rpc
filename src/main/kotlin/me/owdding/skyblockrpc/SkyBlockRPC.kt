@@ -1,5 +1,6 @@
 package me.owdding.skyblockrpc
 
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import me.owdding.lib.utils.MeowddingUpdateChecker
@@ -22,7 +23,9 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.text.CommonText
 import tech.thatgravyboat.skyblockapi.utils.text.Text
 import tech.thatgravyboat.skyblockapi.utils.text.Text.send
+import tech.thatgravyboat.skyblockapi.utils.text.TextBuilder.append
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
+import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.hover
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.url
 
@@ -107,8 +110,8 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     @Subscription
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
-            thenCallback("text text", StringArgumengType.greedyString()) {
-                Config.customText = it.getArgument("text", String::class.java)
+            thenCallback("text text", StringArgumentType.greedyString()) {
+                Config.customText = getArgument("text", String::class.java)
                 Text.of("Set custom text to: ") {
                     color = TextColor.GRAY
                     append("\"${Config.customText}\"") {

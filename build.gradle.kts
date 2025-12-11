@@ -1,237 +1,203 @@
-@file:Suppress("UnstableApiUsage")
-
-import earth.terrarium.cloche.api.metadata.ModMetadata
-import net.msrandom.minecraftcodev.core.utils.toPath
-import net.msrandom.minecraftcodev.fabric.task.JarInJar
-import net.msrandom.minecraftcodev.runs.task.WriteClasspathFile
-import net.msrandom.stubs.GenerateStubApi
+import net.fabricmc.loom.task.RemapJarTask
+import net.fabricmc.loom.task.ValidateAccessWidenerTask
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import kotlin.io.path.*
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createParentDirectories
+import kotlin.io.path.readBytes
+import kotlin.io.path.writeBytes
 
 plugins {
-    java
+    idea
+    id("fabric-loom")
+    `versioned-catalogues`
     kotlin("jvm") version "2.2.0"
-    alias(libs.plugins.terrarium.cloche)
-    id("maven-publish")
     alias(libs.plugins.kotlin.symbol.processor)
 }
 
 repositories {
-    maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
-    maven(url = "https://maven.teamresourceful.com/repository/msrandom/")
-    maven(url = "https://repo.hypixel.net/repository/Hypixel/")
-    maven(url = "https://api.modrinth.com/maven")
-    maven(url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
-    maven(url = "https://maven.nucleoid.xyz")
+    fun scopedMaven(url: String, vararg paths: String) = maven(url) { content { paths.forEach(::includeGroupAndSubgroups) } }
+
+    scopedMaven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1", "me.djtheredstoner")
+    scopedMaven("https://repo.hypixel.net/repository/Hypixel", "net.hypixel")
+    scopedMaven("https://maven.parchmentmc.org/", "org.parchmentmc")
+    scopedMaven("https://api.modrinth.com/maven", "maven.modrinth")
+    scopedMaven(
+        "https://maven.teamresourceful.com/repository/maven-public/",
+        "earth.terrarium",
+        "com.teamresourceful",
+        "tech.thatgravyboat",
+        "me.owdding",
+        "com.terraformersmc",
+        "com.jagrosh"
+    )
+    scopedMaven("https://maven.nucleoid.xyz/", "eu.pb4")
+    scopedMaven(url = "https://maven.shedaniel.me/", "me.shedaniel", "dev.architectury")
     mavenCentral()
-    mavenLocal()
-    cloche {
-        mavenFabric()
-    }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        languageVersion = KotlinVersion.KOTLIN_2_2
-        freeCompilerArgs.addAll(
-            "-Xmulti-platform",
-            "-Xno-check-actual",
-            "-Xexpect-actual-classes",
-            "-Xopt-in=kotlin.time.ExperimentalTime",
-        )
-    }
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    compilerOptions.optIn.add("kotlin.time.ExperimentalTime")
+    compilerOptions.freeCompilerArgs.addAll(
+        "-Xcontext-parameters",
+        "-Xcontext-sensitive-resolution",
+        "-Xnullability-annotations=@org.jspecify.annotations:warn"
+    )
 }
 
-cloche {
-    metadata {
-        modId = "skyblockrpc"
-        name = "SkyBlockRPC"
-        license = ""
-        clientOnly = true
-        icon = "assets/skyblockrpc/logo/logo_sky_big.png"
+dependencies {
+    minecraft(versionedCatalog["minecraft"])
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment(variantOf(versionedCatalog["parchment"]) {
+            artifactType("zip")
+        })
+    })
+
+    modImplementation(libs.fabric.loader)
+    modImplementation(libs.fabric.language.kotlin)
+    modImplementation(versionedCatalog["fabric.api"])
+
+    api(libs.skyblockapi) {
+        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}") }
+    }
+    include(libs.skyblockapi) {
+        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}-remapped") }
+    }
+    api(libs.meowdding.lib) {
+        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}") }
+    }
+    include(libs.meowdding.lib) {
+        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}-remapped") }
     }
 
-    common {
-        dependencies {
-            modImplementation(libs.hypixelapi)
-            modImplementation(libs.skyblockapi)
+    modImplementation(libs.hypixelapi)
 
-            modImplementation(libs.discordipc)
+    includeImplementation(versionedCatalog["resourceful.lib"])
+    includeImplementation(versionedCatalog["resourceful.config"])
+    includeImplementation(versionedCatalog["resourcefulkt.config"])
 
-            modImplementation(libs.fabric.language.kotlin)
+    modImplementation(versionedCatalog["placeholders"])
+    modImplementation(versionedCatalog["olympus"])
 
-            modImplementation(libs.skyblockapi)
-            modImplementation(libs.meowdding.lib)
-
-            //modRuntimeOnly(libs.modmenu)
-        }
-    }
-
-    fun createVersion(
-        name: String,
-        version: String = name,
-        loaderVersion: Provider<String> = libs.versions.fabric.loader,
-        fabricApiVersion: Provider<String> = libs.versions.fabric.api,
-        endAtSameVersion: Boolean = true,
-        minecraftVersionRange: ModMetadata.VersionRange.() -> Unit = {
-            start = version
-            if (endAtSameVersion) {
-                end = version
-                endExclusive = false
-            }
-        },
-        dependencies: MutableMap<String, Provider<MinimalExternalModuleDependency>>.() -> Unit = { },
-    ) {
-        val dependencies = mutableMapOf<String, Provider<MinimalExternalModuleDependency>>().apply(dependencies)
-        val rlib = dependencies["resourcefullib"]!!
-        val rconfig = dependencies["resourcefulconfig"]!!
-
-        fabric(name) {
-            includedClient()
-            minecraftVersion = version
-            this.loaderVersion = loaderVersion.get()
-
-            //include(libs.hypixelapi) - included in sbapi
-
-
-            metadata {
-                entrypoint("client") {
-                    adapter = "kotlin"
-                    value = "me.owdding.skyblockrpc.SkyBlockRPC"
-                }
-
-                fun dependency(modId: String, version: Provider<String>? = null) {
-                    dependency {
-                        this.modId = modId
-                        this.required = true
-                        if (version != null) version {
-                            this.start = version
-                        }
-                    }
-                }
-
-                dependency {
-                    modId = "minecraft"
-                    required = true
-                    version(minecraftVersionRange)
-                }
-                dependency("fabric")
-                dependency("resourcefulconfigkt", libs.versions.rconfigkt)
-                dependency("resourcefulconfig", rconfig.map { it.version!! })
-                dependency("fabricloader", libs.versions.fabric.loader)
-                dependency("fabric-language-kotlin", libs.versions.fabric.language.kotlin)
-                dependency("resourcefullib", rlib.map { it.version!! })
-                dependency("skyblock-api", libs.versions.skyblockapi)
-                dependency("meowdding-lib", libs.versions.meowdding.lib)
-            }
-
-            dependencies {
-                fabricApi(fabricApiVersion, minecraftVersion)
-                modImplementation(rconfig) { isTransitive = false }
-                modImplementation(rlib) { isTransitive = false }
-                modImplementation(libs.resourcefulkt.config) { isTransitive = false }
-
-                include(libs.skyblockapi)
-                include(libs.meowdding.lib)
-                include(rlib)
-                include(rconfig)
-                include(libs.discordipc)
-                include(libs.resourcefulkt.config)
-            }
-
-            runs {
-                client()
-            }
-        }
-    }
-
-    createVersion("1.21.5", fabricApiVersion = provider { "0.127.1" }) {
-        this["resourcefullib"] = libs.resourceful.lib1215
-        this["resourcefulconfig"] = libs.resourceful.config1215
-    }
-    createVersion("1.21.8", minecraftVersionRange = {
-        start = "1.21.6"
-        end = "1.21.8"
-        endExclusive = false
-    }) {
-        this["resourcefullib"] = libs.resourceful.lib1218
-        this["resourcefulconfig"] = libs.resourceful.config1218
-    }
-    createVersion("1.21.9", endAtSameVersion = false, fabricApiVersion = provider { "0.133.7" }) {
-        this["resourcefullib"] = libs.resourceful.lib1219
-        this["resourcefulconfig"] = libs.resourceful.config1219
-    }
-
-    mappings { official() }
+    includeImplementation(libs.discordipc)
 }
 
-tasks.named("createCommonApiStub", GenerateStubApi::class) {
-    excludes.add(libs.skyblockapi.get().module.toString())
-    excludes.add(libs.meowdding.lib.get().module.toString())
+fun DependencyHandler.includeImplementation(dep: Any) {
+    include(dep)
+    modImplementation(dep)
 }
 
-tasks {
-    compileKotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_21
-        }
-    }
-
-    withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-        options.release.set(21)
+val mcVersion = stonecutter.current.version.replace(".", "")
+loom {
+    runConfigs["client"].apply {
+        ideConfigGenerated(true)
+        runDir = "../../run"
+        vmArg("-Dfabric.modsFolder=" + '"' + rootProject.projectDir.resolve("run/${mcVersion}Mods").absolutePath + '"')
     }
 }
 
 java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
 }
 
-
-ksp {
-    this@ksp.excludedSources.from(sourceSets.getByName("1215").kotlin.srcDirs)
-    this@ksp.excludedSources.from(sourceSets.getByName("1218").kotlin.srcDirs)
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.release.set(21)
 }
 
-// TODO temporary workaround for a cloche issue on certain systems, remove once fixed
-tasks.withType<WriteClasspathFile>().configureEach {
-    actions.clear()
-    actions.add {
-        output.get().toPath().also { it.parent.createDirectories() }.takeUnless { it.exists() }?.createFile()
-        generate()
-        val file = output.get().toPath()
-        file.writeText(file.readText().lines().joinToString(File.pathSeparator))
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    compilerOptions.optIn.add("kotlin.time.ExperimentalTime")
+    compilerOptions.freeCompilerArgs.add(
+        "-Xnullability-annotations=@org.jspecify.annotations:warn"
+    )
+}
+
+tasks.processResources {
+    val replacements = mapOf(
+        "version" to version,
+        "minecraft_start" to versionedCatalog.versions.getOrFallback("minecraft.start", "minecraft"),
+        "minecraft_end" to versionedCatalog.versions.getOrFallback("minecraft.end", "minecraft"),
+        "fabric_lang_kotlin" to libs.versions.fabric.language.kotlin.get(),
+        "rlib" to versionedCatalog.versions["resourceful-lib"],
+        "olympus" to versionedCatalog.versions["olympus"],
+        "sbapi" to libs.versions.skyblockapi.get(),
+        "mlib" to libs.versions.meowdding.lib.get(),
+        "rconfigkt" to versionedCatalog.versions["rconfigkt"],
+        "rconfig" to versionedCatalog.versions["resourceful-config"],
+    )
+    inputs.properties(replacements)
+
+    filesMatching("fabric.mod.json") {
+        expand(replacements)
     }
 }
 
-tasks.register("release") {
-    group = "meowdding"
-    sourceSets.filterNot { it.name == SourceSet.MAIN_SOURCE_SET_NAME || it.name == SourceSet.TEST_SOURCE_SET_NAME }
-        .forEach {
-            tasks.findByName("${it.name}IncludeJar")?.let { task ->
-                dependsOn(task)
-                mustRunAfter(task)
-            }
-        }
-}
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
 
-tasks.register("cleanRelease") {
-    group = "meowdding"
-    listOf("clean", "release").forEach {
-        tasks.getByName(it).let { task ->
-            dependsOn(task)
-            mustRunAfter(task)
-        }
+        excludeDirs.add(file("run"))
     }
 }
 
-tasks.withType<JarInJar>().configureEach {
-    include { !it.name.endsWith("-dev.jar") }
+tasks.withType<ProcessResources>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    with(copySpec {
+        from(rootProject.file("src/lang")).include("*.json").into("assets/skyblockrpc/lang")
+    })
+}
 
-    doFirst {
-        includedJarInfo.set(includedJarInfo.map { it.onEach { jar -> jar.moduleName.set(jar.moduleName.map { name -> name.lowercase() }.get()) } }.get())
+val archiveName = "SkyBlockRpc"
+
+base {
+    archivesName.set("$archiveName-${archivesName.get()}")
+}
+
+tasks.named("build") {
+    val files = tasks.named("remapJar").map { it.outputs.files }
+    inputs.properties(
+        "project_name" to project.name,
+        "project_dir" to rootProject.projectDir.toPath().absolutePathString(),
+        "mc_version" to project.stonecutter.current.version,
+        "version" to project.version.toString(),
+        "archive_name" to archiveName
+    )
+
+    doLast {
+        val from = files.get().files.first().toPath()
+        val projectDir = this.inputs.properties["project_dir"].toString()
+        val version = this.inputs.properties["version"]
+        val mcVersion = this.inputs.properties["mc_version"]
+        val archiveName = this.inputs.properties["archive_name"]
+
+        val targetFile = Path(projectDir).resolve("build/libs/${archiveName}-$version-${mcVersion}.jar")
+        targetFile.createParentDirectories()
+        targetFile.writeBytes(from.readBytes())
     }
 }
 
+tasks.withType<ValidateAccessWidenerTask> { enabled = false }
+
+tasks.named<Jar>("jar") {
+    archiveBaseName = archiveName
+    archiveClassifier = "${stonecutter.current.version}-dev"
+}
+
+tasks.named<Jar>("sourcesJar") {
+    archiveBaseName = archiveName
+    archiveClassifier = "${stonecutter.current.version}-sources"
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named<RemapJarTask>("remapJar") {
+    archiveBaseName = archiveName
+    archiveClassifier = stonecutter.current.version
+}
