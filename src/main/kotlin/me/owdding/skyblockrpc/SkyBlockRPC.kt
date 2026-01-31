@@ -7,6 +7,7 @@ import me.owdding.lib.utils.MeowddingUpdateChecker
 import me.owdding.skyblockrpc.config.Config
 import me.owdding.skyblockrpc.rpc.RPCClient
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -49,6 +50,10 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
         Config.register(configurator)
         MeowddingUpdateChecker("qESHWJ0N", SELF, ::sendUpdateMessage)
         SkyBlockAPI.eventBus.register(this)
+
+        ClientLifecycleEvents.CLIENT_STOPPING.register {
+            RPCClient.stop()
+        }
     }
 
     @Subscription
