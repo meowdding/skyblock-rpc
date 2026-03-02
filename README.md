@@ -17,10 +17,3 @@ To configure it, run ``/skyblockrpc``.
 
 - Various elements to showcase either your profile or other information.
 - Rotating elements when selecting multiple elements per line.
-
-### Mod Compatibility
-
-#### SkyBlocker
-
-- **Issue**: [SkyBlocker](https://github.com/SkyblockerMod/Skyblocker) includes its own discord rpc.
-- **Note**: It's not really an issue, you may just have both on your profile if you don't deactivate it.

@@ -1,41 +1,65 @@
 package me.owdding.skyblockrpc.rpc
 
-import com.google.gson.JsonObject
-import com.jagrosh.discordipc.IPCClient
-import com.jagrosh.discordipc.IPCListener
-import com.jagrosh.discordipc.entities.RichPresence
-import com.jagrosh.discordipc.entities.pipe.PipeStatus
+import io.github.vyfor.kpresence.ConnectionState
+import io.github.vyfor.kpresence.RichClient
+import io.github.vyfor.kpresence.event.DisconnectEvent
+import io.github.vyfor.kpresence.event.ReadyEvent
+import io.github.vyfor.kpresence.logger.ILogger
+import me.owdding.skyblockrpc.Element
+import me.owdding.skyblockrpc.SkyBlockRPC
 import me.owdding.skyblockrpc.config.Config
-import java.util.concurrent.CompletableFuture
+import tech.thatgravyboat.skyblockapi.helpers.McClient
 
 object RPCClient {
 
-    private var client: IPCClient? = null
+    private var client: RichClient? = null
 
     fun start() {
-        if (client?.status == PipeStatus.CONNECTED) return
+        if (isConnected()) return
 
-        CompletableFuture.runAsync {
-            client = IPCClient(Config.clientId.toLong()).also {
-                it.setListener(object : IPCListener {
-                    override fun onClose(client: IPCClient?, json: JsonObject?) = stop()
-                    override fun onDisconnect(client: IPCClient?, t: Throwable?) = stop()
-                })
-                it.connect()
+        client = RichClient(Config.clientId.toLong()).apply {
+            logger = ILogger.default()
+            on<ReadyEvent> {
+                SkyBlockRPC.info("RPC Connected")
             }
+            on<DisconnectEvent> {
+                stop()
+                SkyBlockRPC.info("RPC Disconnected")
+            }
+            connect()
         }
     }
 
     fun stop() {
-        if (client?.status == PipeStatus.DISCONNECTED) {
+        if (!isConnected()) {
             client = null
         } else {
-            client?.close()
+            client?.update(null)
+            client?.shutdown()
             client = null
         }
     }
 
-    fun updateActivity(action: RichPresence.Builder.() -> Unit) {
-        client?.sendRichPresence(RichPresence.Builder().apply(action).build())
+    fun updateActivity() {
+        if (!isConnected()) return
+        client?.update {
+            details = Element.getPrimaryLine()
+            state = Element.getSecondaryLine()
+
+            timestamps {
+                start = SkyBlockRPC.skyblockJoin
+            }
+
+            assets {
+                largeImage = Config.logo.id
+                largeText = "Using SkyBlockRPC v${SkyBlockRPC.VERSION} (${McClient.version})"
+            }
+
+            Config.buttons.take(2).forEach {
+                button(it.label, it.url.value)
+            }
+        }
     }
+
+    private fun isConnected(): Boolean = client?.connectionState == ConnectionState.SENT_HANDSHAKE
 }
