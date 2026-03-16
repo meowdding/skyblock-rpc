@@ -22,6 +22,10 @@
                 "Enabling multiple lines will rotate through them."
             ]
         },
+        "dynamic_priority": {
+            "@value": "Dynamic Priority",
+            "desc": "The priority determines which line will be displayed when it exists. TODO"
+        },
         "custom_text": {
             "@value": "Custom Text",
             "desc": "The text that gets displayed when \"Custom Text\" is selected as a line."
