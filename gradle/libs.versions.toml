@@ -4,19 +4,21 @@ fabric-loader = "0.16.10"
 fabric-language-kotlin = "1.13.4+kotlin.2.2.0"
 fabric-api = "0.133.4"
 
-kotlin-symbol-processor = "2.2.0-2.0.2"
+kotlin = "2.3.0"
+kotlin-gradle-plugin = "2.3.0"
+kotlin-symbol-processor = "2.3.5"
 
 # Dependencies
-skyblockapi = "4.0.0-beta.6"
+skyblockapi = "4.0.13+26.1-rc2+build.2"
 hypixelapi = "1.0.1+build.1+mc1.21"
 
 rconfigkt = "3.5.12"
 
-meowdding-lib = "4.0.0-beta.4"
-
-terrarium-cloche = "0.13.5"
+meowdding-lib = "4.0.10-beta.2"
 
 discordipc = "0.5.3"
+
+fabric-loom = "1.15-SNAPSHOT"
 
 [libraries]
 
@@ -32,7 +34,13 @@ meowdding-lib = { module = "me.owdding.meowdding-lib:meowdding-lib", version.ref
 
 discordipc = { module = "com.jagrosh:DiscordIPC", version.ref = "discordipc" }
 
-[plugins]
-terrarium-cloche = { id = "earth.terrarium.cloche", version.ref = "terrarium-cloche" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }
+kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin-gradle-plugin" }
+
+[plugins]
 kotlin-symbol-processor = { id = "com.google.devtools.ksp", version.ref = "kotlin-symbol-processor" }
+
+fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
+fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }

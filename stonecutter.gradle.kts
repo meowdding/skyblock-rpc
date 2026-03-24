@@ -1,9 +1,8 @@
 plugins {
     id("dev.kikugie.stonecutter")
-    id("fabric-loom") version "1.14-SNAPSHOT" apply false
 }
 
-stonecutter active "1.21.11"
+stonecutter active "26.1"
 
 stonecutter parameters {
     swaps["mod_version"] = "\"" + property("version") + "\";"

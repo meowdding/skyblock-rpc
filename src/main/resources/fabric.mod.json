@@ -15,7 +15,7 @@
     },
     "depends": {
         "fabricloader": ">=0.16.10",
-        "minecraft": ">=${minecraft_start} <=${minecraft_end}",
+        "minecraft": "${minecraft_range}",
         "fabric": "*",
         "resourcefulconfigkt": ">=${rconfigkt}",
         "resourcefulconfig": ">=${rconfig}",
