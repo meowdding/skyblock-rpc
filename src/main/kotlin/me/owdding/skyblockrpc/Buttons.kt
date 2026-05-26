@@ -4,11 +4,13 @@ import tech.thatgravyboat.skyblockapi.helpers.McPlayer
 
 private const val SOURCE = "?utm_source=SkyBlockRPC"
 
-enum class Buttons(val label: String, val url: Lazy<String>) {
-    MODRINTH("Modrinth", lazyOf("https://modrinth.com/mod/skyblock-rpc$SOURCE")),
-    SKY_CRYPT("SkyCrypt", lazy { "https://sky.shiiyu.moe/stats/${McPlayer.name}$SOURCE" }),
-    ELITE_BOT("EliteBot", lazy { "https://elitebot.dev/@${McPlayer.name}$SOURCE" }),
+enum class Buttons(val label: String, private val urlProvider: () -> String) {
+    MODRINTH("Modrinth", { "https://modrinth.com/mod/skyblock-rpc$SOURCE" }),
+    SKY_CRYPT("SkyCrypt", { "https://sky.shiiyu.moe/stats/${McPlayer.name}$SOURCE" }),
+    ELITE_BOT("EliteSkyBlock", { "https://eliteskyblock.com/@${McPlayer.name}$SOURCE" }), // TODO: rename enum entry
     ;
+
+    val url: String by lazy { "${urlProvider()}?utm_source=SkyBlockRPC" }
 
     override fun toString() = label
 }
