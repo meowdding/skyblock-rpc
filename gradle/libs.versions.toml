@@ -14,7 +14,7 @@ rconfigkt = "4.0.0-beta.1"
 
 meowdding-lib = "4.2.1"
 
-discordipc = "0.5.3"
+discordipc = "0.11.3"
 
 fabric-loom = "1.15-SNAPSHOT"
 
@@ -30,7 +30,7 @@ resourcefulkt-config = { module = "com.teamresourceful.resourcefulconfigkt:resou
 
 meowdding-lib = { module = "me.owdding.meowdding-lib:meowdding-lib", version.ref = "meowdding-lib" }
 
-discordipc = { module = "com.jagrosh:DiscordIPC", version.ref = "discordipc" }
+discordipc = { module = "io.github.cdagaming:DiscordIPC", version.ref = "discordipc" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 

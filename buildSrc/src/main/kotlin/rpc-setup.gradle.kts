@@ -26,8 +26,7 @@ repositories {
         "com.teamresourceful",
         "tech.thatgravyboat",
         "me.owdding",
-        "com.terraformersmc",
-        "com.jagrosh"
+        "com.terraformersmc"
     )
     scopedMaven("https://maven.nucleoid.xyz/", "eu.pb4")
     scopedMaven(url = "https://maven.shedaniel.me/", "me.shedaniel", "dev.architectury")

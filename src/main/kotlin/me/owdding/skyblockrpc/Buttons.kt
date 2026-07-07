@@ -1,6 +1,6 @@
 package me.owdding.skyblockrpc
 
-import com.jagrosh.discordipc.entities.RichPresenceButton
+import com.google.gson.JsonObject
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
 
 enum class Buttons(val label: String, private val urlProvider: () -> String) {
@@ -11,6 +11,9 @@ enum class Buttons(val label: String, private val urlProvider: () -> String) {
 
     val url: String by lazy { "${urlProvider()}?utm_source=SkyBlockRPC" }
 
-    fun toButton() = RichPresenceButton(url, label)
+    fun toButton() = JsonObject().apply {
+        addProperty("url", url)
+        addProperty("label", label)
+    }
     override fun toString() = label
 }

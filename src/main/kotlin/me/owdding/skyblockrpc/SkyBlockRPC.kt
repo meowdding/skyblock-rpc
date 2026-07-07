@@ -1,5 +1,6 @@
 package me.owdding.skyblockrpc
 
+import com.google.gson.JsonArray
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
@@ -73,11 +74,15 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
         RPCClient.updateActivity {
             setDetails(Element.getPrimaryLine())
             setState(Element.getSecondaryLine())
-            setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION (${McClient.version})")
+            setLargeImageWithTooltip(Config.logo.id, "Using SkyBlockRPC v$VERSION (${McClient.version})")
             setStartTimestamp(skyblockJoin!!)
-            Config.buttons.take(2).forEach {
-                addButton(it.toButton())
+
+            val jsonArray = JsonArray().apply {
+                Config.buttons.take(2).forEach {
+                    add(it.toButton())
+                }
             }
+            setButtons(jsonArray)
         }
     }
 
