@@ -7,6 +7,7 @@ import com.jagrosh.discordipc.entities.Packet
 import com.jagrosh.discordipc.entities.RichPresence
 import com.jagrosh.discordipc.entities.User
 import com.jagrosh.discordipc.entities.pipe.PipeStatus
+import me.owdding.skyblockrpc.SkyBlockRPC
 import me.owdding.skyblockrpc.config.Config
 import java.util.concurrent.CompletableFuture
 
@@ -18,20 +19,25 @@ object RPCClient {
         if (client?.status == PipeStatus.CONNECTED) return
 
         CompletableFuture.runAsync {
-            client = IPCClient(Config.clientId.toLong()).also {
-                it.setListener(
-                    object : IPCListener {
-                        override fun onPacketSent(client: IPCClient, packet: Packet) {}
-                        override fun onPacketReceived(client: IPCClient, packet: Packet) {}
-                        override fun onActivityJoin(client: IPCClient, secret: String) {}
-                        override fun onActivitySpectate(client: IPCClient, secret: String) {}
-                        override fun onActivityJoinRequest(client: IPCClient, secret: String, user: User) {}
-                        override fun onReady(client: IPCClient) {}
-                        override fun onClose(client: IPCClient?, json: JsonObject?) = stop()
-                        override fun onDisconnect(client: IPCClient?, t: Throwable?) = stop()
-                    },
-                )
-                it.connect()
+            try {
+                client = IPCClient(Config.clientId.toLong()).also {
+                    it.setListener(
+                        object : IPCListener {
+                            override fun onPacketSent(client: IPCClient, packet: Packet) {}
+                            override fun onPacketReceived(client: IPCClient, packet: Packet) {}
+                            override fun onActivityJoin(client: IPCClient, secret: String) {}
+                            override fun onActivitySpectate(client: IPCClient, secret: String) {}
+                            override fun onActivityJoinRequest(client: IPCClient, secret: String, user: User) {}
+                            override fun onReady(client: IPCClient) {}
+                            override fun onClose(client: IPCClient?, json: JsonObject?) = stop()
+                            override fun onDisconnect(client: IPCClient?, t: Throwable?) = stop()
+                        },
+                    )
+                    it.connect()
+                }
+            } catch (e: Exception) {
+                SkyBlockRPC.error("Failed to connect to Discord RPC", e)
+                stop()
             }
         }
     }

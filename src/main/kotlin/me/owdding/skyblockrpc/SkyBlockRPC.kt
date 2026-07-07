@@ -68,8 +68,9 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
         if (skyblockJoin == null) {
             skyblockJoin = System.currentTimeMillis()
-            RPCClient.start()
         }
+
+        RPCClient.start()
 
         RPCClient.updateActivity {
             setDetails(Element.getPrimaryLine())
