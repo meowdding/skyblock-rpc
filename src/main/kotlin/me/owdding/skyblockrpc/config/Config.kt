@@ -58,4 +58,9 @@ object Config : ConfigKt("skyblock-rpc/config") {
     val clientId by string("1356650867939475756") {
         translation = "skyblockrpc.config.client_id"
     }
+
+
+    val debug by boolean(false) {
+        translation = "skyblockrpc.config.debug"
+    }
 }
