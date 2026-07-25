@@ -167,7 +167,7 @@ dependencies {
     includeImplementation(versionedCatalog["resourcefulkt.config"])
 
     implementation(versionedCatalog["placeholders"])
-    implementation(versionedCatalog["olympus"])
+    includeImplementation(versionedCatalog["olympus"])
 
     includeImplementation(versionedCatalog["discordipc"])
 }
