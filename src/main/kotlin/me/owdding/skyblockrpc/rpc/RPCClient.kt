@@ -1,69 +1,69 @@
 package me.owdding.skyblockrpc.rpc
 
-import com.google.gson.JsonObject
-import com.jagrosh.discordipc.IPCClient
-import com.jagrosh.discordipc.IPCListener
-import com.jagrosh.discordipc.entities.Packet
-import com.jagrosh.discordipc.entities.RichPresence
-import com.jagrosh.discordipc.entities.User
-import com.jagrosh.discordipc.entities.pipe.PipeStatus
+import io.github.vyfor.kpresence.ConnectionState
+import io.github.vyfor.kpresence.RichClient
+import io.github.vyfor.kpresence.event.DisconnectEvent
+import io.github.vyfor.kpresence.event.ReadyEvent
+import io.github.vyfor.kpresence.logger.ILogger
+import me.owdding.skyblockrpc.Element
 import me.owdding.skyblockrpc.SkyBlockRPC
 import me.owdding.skyblockrpc.config.Config
-import java.util.concurrent.CompletableFuture
+import tech.thatgravyboat.skyblockapi.helpers.McClient
 
 object RPCClient {
 
-    private var client: IPCClient? = null
+    private var client: RichClient? = null
 
     fun start() {
-        if (client != null) return
+        if (isConnected()) return
 
-        client = IPCClient(Config.clientId.toLong())
-
-        CompletableFuture.runAsync {
-            try {
-                client?.setListener(
-                    object : IPCListener {
-                        override fun onPacketSent(client: IPCClient, packet: Packet) {
-                            if (Config.debug) SkyBlockRPC.info("Send: $packet")
-                        }
-
-                        override fun onPacketReceived(client: IPCClient, packet: Packet) {
-                            if (Config.debug) SkyBlockRPC.info("Received: $packet")
-                        }
-
-                        override fun onActivityJoin(client: IPCClient, secret: String) {}
-                        override fun onActivitySpectate(client: IPCClient, secret: String) {}
-                        override fun onActivityJoinRequest(client: IPCClient, secret: String, user: User) {}
-                        override fun onReady(client: IPCClient) {}
-                        override fun onClose(client: IPCClient?, json: JsonObject?) = stop()
-                        override fun onDisconnect(client: IPCClient?, t: Throwable?) = stop()
-                    },
-                )
-                client?.connect()
-            } catch (e: Throwable) {
-                SkyBlockRPC.error("Failed to connect to Discord RPC", e)
-                stop()
+        client = RichClient(Config.clientId.toLong()).apply {
+            logger = ILogger.default()
+            on<ReadyEvent> {
+                SkyBlockRPC.info("RPC Connected")
             }
+            on<DisconnectEvent> {
+                stop()
+                SkyBlockRPC.info("RPC Disconnected")
+            }
+            connect()
         }
     }
 
     fun stop() {
         if (client == null) return
 
-        if (client?.status == PipeStatus.DISCONNECTED) {
+        if (!isConnected()) {
             client = null
             SkyBlockRPC.warn("Stopping while already disconnected")
         } else {
-            client?.close()
+            client?.update(null)
+            client?.shutdown()
             client = null
             SkyBlockRPC.info("Stopping client connection")
         }
     }
 
-    fun updateActivity(action: RichPresence.Builder.() -> Unit) {
-        if (client?.status == PipeStatus.CONNECTED) {
-            client?.sendRichPresence(RichPresence.Builder().apply(action).build())
+    fun updateActivity() {
+        if (!isConnected()) return
+        client?.update {
+            details = Element.getPrimaryLine()
+            state = Element.getSecondaryLine()
+
+            timestamps {
+                start = SkyBlockRPC.skyblockJoin
+            }
+
+            assets {
+                largeImage = Config.logo.id
+                largeText = "Using SkyBlockRPC v${SkyBlockRPC.VERSION} (${McClient.version})"
+            }
+
+            Config.buttons.take(2).forEach {
+                button(it.label, it.url)
+            }
         }
     }
+
+    private fun isConnected(): Boolean = client?.connectionState == ConnectionState.SENT_HANDSHAKE
 }

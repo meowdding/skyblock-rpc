@@ -76,23 +76,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
         RPCClient.start()
 
-        if (lastUpdate.since() < 15.seconds) return
-        RPCClient.updateActivity {
-            setDetails(Element.getPrimaryLine() ?: "Playing SkyBlock")
-            setState(Element.getSecondaryLine() ?: "Exploring")
-            setLargeImageWithTooltip(Config.logo.id, "Using SkyBlockRPC v$VERSION (${McClient.version})")
-            //setStartTimestamp(skyblockJoin!! / 1000)
-
-            val jsonArray = JsonArray().apply {
-                Config.buttons.take(2).forEach {
-                    add(it.toButton())
-                }
-            }
-            if (jsonArray.size() > 0) {
-                setButtons(jsonArray)
-            }
-        }
-        lastUpdate = currentInstant()
+        RPCClient.updateActivity()
     }
 
     enum class Logo(val id: String, val displayName: String) {
@@ -129,6 +113,16 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     @Subscription
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
+            thenCallback("start") {
+                RPCClient.start()
+                Text.of("Started RPC").withColor(TextColor.GREEN).sendWithPrefix()
+            }
+
+            thenCallback("stop") {
+                RPCClient.stop()
+                Text.of("Stopped RPC").withColor(TextColor.RED).sendWithPrefix()
+            }
+
             thenCallback("text text", StringArgumentType.greedyString()) {
                 Config.customText = getArgument("text", String::class.java)
                 Text.of("Set custom text to: ") {
