@@ -47,6 +47,12 @@ enum class Element(val example: String, val getter: () -> String) {
             else "$name: ${amount.toFormattedString()}"
         },
     ),
+    DYNAMIC(
+        "Dynamic Element",
+        {
+            DynamicElement.getElement() ?: "No Dynamic Element"
+        },
+    ),
     CUSTOM_TEXT("Custom Text", {
         Config.customText
     }),

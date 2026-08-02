@@ -23,5 +23,6 @@
         "resourcefullib": ">=${rlib}",
         "skyblock-api": ">=${sbapi}",
         "meowdding-lib": ">=${mlib}"
-    }
+    },
+    "accessWidener": "skyblock-rpc.accesswidener"
 }

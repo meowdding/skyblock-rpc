@@ -43,12 +43,17 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 val mcVersion = stonecutter.current.version.replace(".", "")
+val accessWidenerFile = rootProject.file("src/main/skyblock-rpc.accesswidener")
 val loom = extensions.getByName<LoomGradleExtensionAPI>("loom")
 loom.apply {
     runConfigs["client"].apply {
         ideConfigGenerated(true)
         runDir = "../../run"
         vmArg("-Dfabric.modsFolder=" + '"' + rootProject.projectDir.resolve("run/${mcVersion}Mods").absolutePath + '"')
+    }
+
+    if (accessWidenerFile.exists()) {
+        accessWidenerPath.set(accessWidenerFile)
     }
 }
 
@@ -105,10 +110,15 @@ idea {
     }
 }
 
+tasks.withType<ValidateAccessWidenerTask> { enabled = false }
+
 tasks.withType<ProcessResources>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     with(copySpec {
         from(rootProject.file("src/lang")).include("*.json").into("assets/skyblockrpc/lang")
+    })
+    with(copySpec {
+        from(accessWidenerFile)
     })
 }
 
