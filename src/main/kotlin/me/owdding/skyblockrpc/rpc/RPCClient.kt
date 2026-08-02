@@ -31,12 +31,16 @@ object RPCClient {
     }
 
     fun stop() {
+        if (client == null) return
+
         if (!isConnected()) {
             client = null
+            SkyBlockRPC.warn("Stopping while already disconnected")
         } else {
             client?.update(null)
             client?.shutdown()
             client = null
+            SkyBlockRPC.info("Stopping client connection")
         }
     }
 
@@ -56,7 +60,7 @@ object RPCClient {
             }
 
             Config.buttons.take(2).forEach {
-                button(it.label, it.url.value)
+                button(it.label, it.url)
             }
         }
     }

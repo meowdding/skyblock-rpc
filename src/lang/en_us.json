@@ -48,6 +48,10 @@
                 "<red>Don't change this unless you know what you're doing!</red>",
                 "Needs a restart to take effect."
             ]
+        },
+        "debug": {
+            "@value": "Adds Debug Logging",
+            "desc": "Spams your console with additional information, only enable this when told"
         }
     }
 }

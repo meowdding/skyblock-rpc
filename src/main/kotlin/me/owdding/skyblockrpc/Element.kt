@@ -1,16 +1,16 @@
 package me.owdding.skyblockrpc
 
 import me.owdding.skyblockrpc.config.Config
+import tech.thatgravyboat.skyblockapi.api.area.mining.GlaciteAPI
 import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.api.location.SkyBlockIsland
 import tech.thatgravyboat.skyblockapi.api.profile.currency.CurrencyAPI
+import tech.thatgravyboat.skyblockapi.api.profile.hotf.WhispersAPI
+import tech.thatgravyboat.skyblockapi.api.profile.hotm.PowderAPI
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
 import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
 import tech.thatgravyboat.skyblockapi.utils.extentions.toFormattedString
 
-// todo:
-//  powder for current location
-//
 enum class Element(val example: String, val getter: () -> String) {
     PURSE("Purse: 123,456 (Motes in Rift)", {
         if (SkyBlockIsland.THE_RIFT.inIsland()) "Motes: ${CurrencyAPI.motes.toFormattedString()}"
@@ -34,6 +34,19 @@ enum class Element(val example: String, val getter: () -> String) {
     HELD_ITEM("Holding: Aspect of the End", {
         "Holding: ${McPlayer.heldItem.takeUnless { it.isEmpty }?.cleanName ?: "Nothing"}"
     }),
+    POWDER(
+        "Mithril Powder: 123,456",
+        {
+            val (name, amount) = when (LocationAPI.island) {
+                SkyBlockIsland.CRYSTAL_HOLLOWS -> "Gemstone Powder" to PowderAPI.gemstone
+                SkyBlockIsland.DWARVEN_MINES -> if (GlaciteAPI.inGlaciteTunnels()) "Glacite Powder" to PowderAPI.glacite else "Mithril Powder" to PowderAPI.mithril
+                SkyBlockIsland.GALATEA -> "Forest Whispers" to WhispersAPI.forest
+                else -> null to null
+            }
+            if (name == null || amount == null) "No Powder Island"
+            else "$name: ${amount.toFormattedString()}"
+        },
+    ),
     CUSTOM_TEXT("Custom Text", {
         Config.customText
     }),
