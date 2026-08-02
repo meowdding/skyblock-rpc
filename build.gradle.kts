@@ -1,20 +1,17 @@
-import net.fabricmc.loom.task.RemapJarTask
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.ValidateAccessWidenerTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import kotlin.io.path.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createParentDirectories
-import kotlin.io.path.readBytes
-import kotlin.io.path.writeBytes
 
 plugins {
-    idea
-    id("fabric-loom")
-    `versioned-catalogues`
-    kotlin("jvm") version "2.2.0"
-    alias(libs.plugins.kotlin.symbol.processor)
+    id("idea")
+    id("net.fabricmc.fabric-loom")
+    id("versioned-catalogues")
+    kotlin("jvm")
+    id("com.google.devtools.ksp")
 }
+
+private val stonecutter = project.extensions.getByName("stonecutter") as dev.kikugie.stonecutter.build.StonecutterBuildExtension
 
 repositories {
     fun scopedMaven(url: String, vararg paths: String) = maven(url) { content { paths.forEach(::includeGroupAndSubgroups) } }
@@ -29,8 +26,7 @@ repositories {
         "com.teamresourceful",
         "tech.thatgravyboat",
         "me.owdding",
-        "com.terraformersmc",
-        "com.jagrosh"
+        "com.terraformersmc"
     )
     scopedMaven("https://maven.nucleoid.xyz/", "eu.pb4")
     scopedMaven(url = "https://maven.shedaniel.me/", "me.shedaniel", "dev.architectury")
@@ -46,53 +42,10 @@ tasks.withType<KotlinCompile>().configureEach {
         "-Xnullability-annotations=@org.jspecify.annotations:warn"
     )
 }
-
-dependencies {
-    minecraft(versionedCatalog["minecraft"])
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment(variantOf(versionedCatalog["parchment"]) {
-            artifactType("zip")
-        })
-    })
-
-    modImplementation(libs.fabric.loader)
-    modImplementation(libs.fabric.language.kotlin)
-    modImplementation(versionedCatalog["fabric.api"])
-
-    api(libs.skyblockapi) {
-        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}") }
-    }
-    include(libs.skyblockapi) {
-        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}-remapped") }
-    }
-    api(libs.meowdding.lib) {
-        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}") }
-    }
-    include(libs.meowdding.lib) {
-        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}-remapped") }
-    }
-
-    modImplementation(libs.hypixelapi)
-
-    includeImplementation(versionedCatalog["resourceful.lib"])
-    includeImplementation(versionedCatalog["resourceful.config"])
-    includeImplementation(versionedCatalog["resourcefulkt.config"])
-
-    modImplementation(versionedCatalog["placeholders"])
-    modImplementation(versionedCatalog["olympus"])
-
-    includeImplementation(libs.discordipc)
-}
-
-fun DependencyHandler.includeImplementation(dep: Any) {
-    include(dep)
-    modImplementation(dep)
-}
-
 val mcVersion = stonecutter.current.version.replace(".", "")
 val accessWidenerFile = rootProject.file("src/main/skyblock-rpc.accesswidener")
-loom {
+val loom = extensions.getByName<LoomGradleExtensionAPI>("loom")
+loom.apply {
     runConfigs["client"].apply {
         ideConfigGenerated(true)
         runDir = "../../run"
@@ -105,17 +58,17 @@ loom {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
     withSourcesJar()
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(21)
+    options.release.set(25)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_25)
     compilerOptions.optIn.add("kotlin.time.ExperimentalTime")
     compilerOptions.freeCompilerArgs.add(
         "-Xnullability-annotations=@org.jspecify.annotations:warn"
@@ -123,15 +76,21 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 tasks.processResources {
+    val range = if (versionedCatalog.versions.has("minecraft.range")) {
+        versionedCatalog.versions.get("minecraft.range").toString()
+    } else {
+        val start = versionedCatalog.versions.getOrFallback("minecraft.start", "minecraft")
+        val end = versionedCatalog.versions.getOrFallback("minecraft.end", "minecraft")
+        ">=$start <=$end"
+    }
     val replacements = mapOf(
         "version" to version,
-        "minecraft_start" to versionedCatalog.versions.getOrFallback("minecraft.start", "minecraft"),
-        "minecraft_end" to versionedCatalog.versions.getOrFallback("minecraft.end", "minecraft"),
-        "fabric_lang_kotlin" to libs.versions.fabric.language.kotlin.get(),
+        "minecraft_range" to range,
+        "fabric_lang_kotlin" to versionedCatalog.versions["fabric.language.kotlin"],
         "rlib" to versionedCatalog.versions["resourceful-lib"],
         "olympus" to versionedCatalog.versions["olympus"],
-        "sbapi" to libs.versions.skyblockapi.get(),
-        "mlib" to libs.versions.meowdding.lib.get(),
+        "sbapi" to versionedCatalog.versions["skyblockapi"],
+        "mlib" to versionedCatalog.versions["meowdding.lib"],
         "rconfigkt" to versionedCatalog.versions["rconfigkt"],
         "rconfig" to versionedCatalog.versions["resourceful-config"],
     )
@@ -169,29 +128,6 @@ base {
     archivesName.set("$archiveName-${archivesName.get()}")
 }
 
-tasks.named("build") {
-    val files = tasks.named("remapJar").map { it.outputs.files }
-    inputs.properties(
-        "project_name" to project.name,
-        "project_dir" to rootProject.projectDir.toPath().absolutePathString(),
-        "mc_version" to project.stonecutter.current.version,
-        "version" to project.version.toString(),
-        "archive_name" to archiveName
-    )
-
-    doLast {
-        val from = files.get().files.first().toPath()
-        val projectDir = this.inputs.properties["project_dir"].toString()
-        val version = this.inputs.properties["version"]
-        val mcVersion = this.inputs.properties["mc_version"]
-        val archiveName = this.inputs.properties["archive_name"]
-
-        val targetFile = Path(projectDir).resolve("build/libs/${archiveName}-$version-${mcVersion}.jar")
-        targetFile.createParentDirectories()
-        targetFile.writeBytes(from.readBytes())
-    }
-}
-
 tasks.withType<ValidateAccessWidenerTask> { enabled = false }
 
 tasks.named<Jar>("jar") {
@@ -205,7 +141,48 @@ tasks.named<Jar>("sourcesJar") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-tasks.named<RemapJarTask>("remapJar") {
-    archiveBaseName = archiveName
-    archiveClassifier = stonecutter.current.version
+tasks.named("build") {
+    doLast {
+        val sourceFile = rootProject.projectDir.resolve("versions/${project.name}/build/libs/${archiveName}-$version-${stonecutter.current.version}-dev.jar")
+        val targetFile = rootProject.projectDir.resolve("build/libs/${archiveName}-$version-${stonecutter.current.version}.jar")
+        targetFile.parentFile.mkdirs()
+        targetFile.writeBytes(sourceFile.readBytes())
+    }
+}
+
+dependencies {
+    minecraft(versionedCatalog["minecraft"])
+
+    implementation(versionedCatalog["fabric.loader"])
+    implementation(versionedCatalog["fabric.language.kotlin"])
+    implementation(versionedCatalog["fabric.api"])
+
+    api(versionedCatalog["skyblockapi"]) {
+        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}") }
+    }
+    include(versionedCatalog["skyblockapi"]) {
+        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}") }
+    }
+    api(versionedCatalog["meowdding.lib"]) {
+        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}") }
+    }
+    include(versionedCatalog["meowdding.lib"]) {
+        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}") }
+    }
+
+    implementation(versionedCatalog["hypixelapi"])
+
+    includeImplementation(versionedCatalog["resourceful.lib"])
+    includeImplementation(versionedCatalog["resourceful.config"])
+    includeImplementation(versionedCatalog["resourcefulkt.config"])
+
+    implementation(versionedCatalog["placeholders"])
+    includeImplementation(versionedCatalog["olympus"])
+
+    includeImplementation(versionedCatalog["discordipc"])
+}
+
+fun DependencyHandlerScope.includeImplementation(dep: Any) {
+    include(dep)
+    implementation(dep)
 }

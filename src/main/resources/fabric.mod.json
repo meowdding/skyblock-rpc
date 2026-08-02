@@ -15,8 +15,8 @@
     },
     "depends": {
         "fabricloader": ">=0.16.10",
-        "minecraft": ">=${minecraft_start} <=${minecraft_end}",
-        "fabric": "*",
+        "minecraft": "${minecraft_range}",
+        "fabric-api": "*",
         "resourcefulconfigkt": ">=${rconfigkt}",
         "resourcefulconfig": ">=${rconfig}",
         "fabric-language-kotlin": ">=${fabric_lang_kotlin}",

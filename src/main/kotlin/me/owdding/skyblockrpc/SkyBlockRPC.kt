@@ -1,5 +1,6 @@
 package me.owdding.skyblockrpc
 
+import com.google.gson.JsonArray
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
@@ -7,6 +8,7 @@ import me.owdding.lib.utils.MeowddingUpdateChecker
 import me.owdding.skyblockrpc.config.Config
 import me.owdding.skyblockrpc.rpc.RPCClient
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -20,6 +22,8 @@ import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.utils.extentions.currentInstant
+import tech.thatgravyboat.skyblockapi.utils.extentions.since
 import tech.thatgravyboat.skyblockapi.utils.text.CommonText
 import tech.thatgravyboat.skyblockapi.utils.text.Text
 import tech.thatgravyboat.skyblockapi.utils.text.Text.send
@@ -28,6 +32,7 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.hover
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.url
+import kotlin.time.Duration.Companion.seconds
 
 object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("SkyBlockRPC") {
 
@@ -44,11 +49,16 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     val configurator = Configurator(MOD_ID)
 
     var skyblockJoin: Long? = null
+    var lastUpdate = currentInstant()
 
     override fun onInitializeClient() {
         Config.register(configurator)
         MeowddingUpdateChecker("qESHWJ0N", SELF, ::sendUpdateMessage)
         SkyBlockAPI.eventBus.register(this)
+
+        ClientLifecycleEvents.CLIENT_STOPPING.register {
+            RPCClient.stop()
+        }
     }
 
     @Subscription
@@ -62,18 +72,11 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
         if (skyblockJoin == null) {
             skyblockJoin = System.currentTimeMillis()
-            RPCClient.start()
         }
 
-        RPCClient.updateActivity {
-            setDetails(Element.getPrimaryLine())
-            setState(Element.getSecondaryLine())
-            setLargeImage(Config.logo.id, "Using SkyBlockRPC v$VERSION (${McClient.version})")
-            setStartTimestamp(skyblockJoin!!)
-            Config.buttons.take(2).forEach {
-                addButton(it.toButton())
-            }
-        }
+        RPCClient.start()
+
+        RPCClient.updateActivity()
     }
 
     enum class Logo(val id: String, val displayName: String) {
@@ -110,6 +113,16 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     @Subscription
     fun onRegisterCommands(event: RegisterCommandsEvent) {
         val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
+            thenCallback("start") {
+                RPCClient.start()
+                Text.of("Started RPC").withColor(TextColor.GREEN).sendWithPrefix()
+            }
+
+            thenCallback("stop") {
+                RPCClient.stop()
+                Text.of("Stopped RPC").withColor(TextColor.RED).sendWithPrefix()
+            }
+
             thenCallback("text text", StringArgumentType.greedyString()) {
                 Config.customText = getArgument("text", String::class.java)
                 Text.of("Set custom text to: ") {

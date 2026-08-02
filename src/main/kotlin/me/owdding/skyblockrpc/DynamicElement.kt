@@ -29,7 +29,7 @@ enum class DynamicElement(val example: String, val getter: () -> String?) {
     INVENTORY_TITLE(
         "Inventory Title",
         {
-            McScreen.self?.title?.stripped?.let { "Looking at $it" }
+            McScreen.self?.title?.stripped?.takeUnless { it.isEmpty() }?.let { "Looking at $it" }
         },
     ),
     AFK(
