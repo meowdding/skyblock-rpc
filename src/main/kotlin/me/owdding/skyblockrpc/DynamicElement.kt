@@ -9,6 +9,9 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
+// TODO
+//  - Commissions
+//  - Agatha/Maria Contest
 enum class DynamicElement(val example: String, val getter: () -> String?) {
     SLAYER(
         "Slayer Boss",
