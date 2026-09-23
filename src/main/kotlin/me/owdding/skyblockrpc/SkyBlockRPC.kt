@@ -1,13 +1,14 @@
 package me.owdding.skyblockrpc
 
-import com.google.gson.JsonArray
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
 import me.owdding.lib.utils.MeowddingUpdateChecker
 import me.owdding.skyblockrpc.config.Config
+import me.owdding.skyblockrpc.events.RegisterRpcCommandsEvent
 import me.owdding.skyblockrpc.rpc.RPCClient
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.chat.Component
@@ -17,13 +18,10 @@ import org.slf4j.LoggerFactory
 import tech.thatgravyboat.skyblockapi.api.SkyBlockAPI
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.base.predicates.TimePassed
-import tech.thatgravyboat.skyblockapi.api.events.misc.LiteralCommandBuilder
-import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.api.location.LocationAPI
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.extentions.currentInstant
-import tech.thatgravyboat.skyblockapi.utils.extentions.since
 import tech.thatgravyboat.skyblockapi.utils.text.CommonText
 import tech.thatgravyboat.skyblockapi.utils.text.Text
 import tech.thatgravyboat.skyblockapi.utils.text.Text.send
@@ -32,18 +30,17 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.hover
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.url
-import kotlin.time.Duration.Companion.seconds
 
 object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("SkyBlockRPC") {
 
-    val MOD_ID = "skyblockrpc"
+    const val MOD_ID = "skyblockrpc"
     val SELF = FabricLoader.getInstance().getModContainer(MOD_ID).get()
     val VERSION: String = SELF.metadata.version.friendlyString
 
     val prefix = Text.join(
-        Text.of("[").withColor(TextColor.GRAY),
-        Text.of("SbRPC").withColor(TextColor.AQUA),
-        Text.of("] ").withColor(TextColor.GRAY),
+        Text.of("[", TextColor.GRAY),
+        Text.of("SbRPC", TextColor.AQUA),
+        Text.of("] ", TextColor.GRAY),
     )
 
     val configurator = Configurator(MOD_ID)
@@ -56,6 +53,9 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
         MeowddingUpdateChecker("qESHWJ0N", SELF, ::sendUpdateMessage)
         SkyBlockAPI.eventBus.register(this)
 
+        ClientCommandRegistrationCallback.EVENT.register { dispatcher, context ->
+            RegisterRpcCommandsEvent(dispatcher, context).post(SkyBlockAPI.eventBus)
+        }
         ClientLifecycleEvents.CLIENT_STOPPING.register {
             RPCClient.stop()
         }
@@ -91,16 +91,16 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     fun sendUpdateMessage(link: String, current: String, new: String) {
         fun MutableComponent.withLink() = this.apply {
             this.url = link
-            this.hover = Text.of(link).withColor(TextColor.GRAY)
+            this.hover = Text.of(link, TextColor.GRAY)
         }
 
         McClient.runNextTick {
             CommonText.EMPTY.send()
             Text.join(
                 "New version found! (",
-                Text.of(current).withColor(TextColor.RED),
-                Text.of(" -> ").withColor(TextColor.GRAY),
-                Text.of(new).withColor(TextColor.GREEN),
+                Text.of(current, TextColor.RED),
+                Text.of(" -> ", TextColor.GRAY),
+                Text.of(new, TextColor.GREEN),
                 ")",
             ).withLink().sendWithPrefix()
             Text.of("Click to download.").withLink().sendWithPrefix()
@@ -111,19 +111,19 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     fun Component.sendWithPrefix() = Text.join(prefix, this).send()
 
     @Subscription
-    fun onRegisterCommands(event: RegisterCommandsEvent) {
-        val rpcCommand: (LiteralCommandBuilder.() -> Unit) = {
-            thenCallback("start") {
-                RPCClient.start()
-                Text.of("Started RPC").withColor(TextColor.GREEN).sendWithPrefix()
-            }
+    fun onRegisterCommands(event: RegisterRpcCommandsEvent) {
+        event.registerWithCallback("start") {
+            RPCClient.start()
+            Text.of("Started RPC").withColor(TextColor.GREEN).sendWithPrefix()
+        }
 
-            thenCallback("stop") {
-                RPCClient.stop()
-                Text.of("Stopped RPC").withColor(TextColor.RED).sendWithPrefix()
-            }
+        event.registerWithCallback("stop") {
+            RPCClient.stop()
+            Text.of("Stopped RPC").withColor(TextColor.RED).sendWithPrefix()
+        }
 
-            thenCallback("text text", StringArgumentType.greedyString()) {
+        event.register("text") {
+            thenCallback("text", StringArgumentType.greedyString()) {
                 Config.customText = getArgument("text", String::class.java)
                 Text.of("Set custom text to: ") {
                     color = TextColor.GRAY
@@ -132,13 +132,10 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
                     }
                 }.sendWithPrefix()
             }
-
-            callback {
-                McClient.setScreenAsync { ResourcefulConfigScreen.getFactory(MOD_ID).apply(null) }
-            }
         }
 
-        event.register("sbrpc") { rpcCommand() }
-        event.register("skyblockrpc") { rpcCommand() }
+        event.registerBaseCallback {
+            McClient.setScreenAsync { ResourcefulConfigScreen.getFactory(MOD_ID).apply(null) }
+        }
     }
 }
