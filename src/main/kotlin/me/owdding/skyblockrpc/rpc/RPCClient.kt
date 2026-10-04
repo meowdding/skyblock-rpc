@@ -4,6 +4,7 @@ import io.github.vyfor.kpresence.ConnectionState
 import io.github.vyfor.kpresence.RichClient
 import io.github.vyfor.kpresence.event.DisconnectEvent
 import io.github.vyfor.kpresence.event.ReadyEvent
+import io.github.vyfor.kpresence.exception.PipeNotFoundException
 import io.github.vyfor.kpresence.logger.ILogger
 import me.owdding.skyblockrpc.Element
 import me.owdding.skyblockrpc.SkyBlockRPC
@@ -17,16 +18,24 @@ object RPCClient {
     fun start() {
         if (isConnected()) return
 
-        client = RichClient(Config.clientId.toLong()).apply {
-            logger = ILogger.default()
-            on<ReadyEvent> {
-                SkyBlockRPC.info("RPC Connected")
+        client = try {
+            RichClient(Config.clientId.toLong()).apply {
+                logger = ILogger.default()
+                on<ReadyEvent> {
+                    SkyBlockRPC.info("RPC Connected")
+                }
+                on<DisconnectEvent> {
+                    stop()
+                    SkyBlockRPC.info("RPC Disconnected")
+                }
+                connect()
             }
-            on<DisconnectEvent> {
-                stop()
-                SkyBlockRPC.info("RPC Disconnected")
-            }
-            connect()
+        } catch (_: PipeNotFoundException) {
+            // Discord isn't running
+            null
+        } catch (e: Exception) {
+            SkyBlockRPC.error("Failed to connect to Discord RPC", e)
+            null
         }
     }
 
