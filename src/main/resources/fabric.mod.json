@@ -3,7 +3,8 @@
     "id": "skyblockrpc",
     "version": "${version}",
     "name": "SkyBlockRPC",
-    "license": "",
+    "license": "MIT",
+    "environment": "client",
     "icon": "assets/skyblockrpc/logo/logo_sky_big.png",
     "entrypoints": {
         "client": [
