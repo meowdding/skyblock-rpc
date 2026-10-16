@@ -7,12 +7,10 @@ kotlin = "2.3.0"
 kotlin-gradle-plugin = "2.3.0"
 kotlin-symbol-processor = "2.3.5"
 
-skyblockapi = "4.2.27"
+skyblockapi = "4.2.39"
 hypixelapi = "1.0.2+build.1+mc26.1"
 
 rconfigkt = "4.0.0-beta.1"
-
-meowdding-lib = "4.2.26"
 
 discordipc = "0.6.6"
 
@@ -28,8 +26,6 @@ hypixelapi = { module = "maven.modrinth:hypixel-mod-api", version.ref = "hypixel
 
 resourcefulkt-config = { module = "com.teamresourceful.resourcefulconfigkt:resourcefulconfigkt-26.1-rc-1", version.ref = "rconfigkt" }
 
-meowdding-lib = { module = "me.owdding.meowdding-lib:meowdding-lib", version.ref = "meowdding-lib" }
-
 discordipc = { module = "io.github.vyfor:kpresence", version.ref = "discordipc" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -40,5 +36,4 @@ kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin
 [plugins]
 kotlin-symbol-processor = { id = "com.google.devtools.ksp", version.ref = "kotlin-symbol-processor" }
 
-fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }

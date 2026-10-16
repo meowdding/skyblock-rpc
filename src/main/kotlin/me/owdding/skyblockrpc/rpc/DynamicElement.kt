@@ -1,10 +1,10 @@
-package me.owdding.skyblockrpc
+package me.owdding.skyblockrpc.rpc
 
-import me.owdding.lib.extensions.toReadableTime
 import me.owdding.skyblockrpc.config.Config
 import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerAPI
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McScreen
+import tech.thatgravyboat.skyblockapi.utils.extentions.toReadableTime
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes

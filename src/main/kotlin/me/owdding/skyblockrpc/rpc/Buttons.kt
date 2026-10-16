@@ -1,4 +1,4 @@
-package me.owdding.skyblockrpc
+package me.owdding.skyblockrpc.rpc
 
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
 

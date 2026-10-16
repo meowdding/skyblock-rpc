@@ -6,7 +6,6 @@ import io.github.vyfor.kpresence.event.DisconnectEvent
 import io.github.vyfor.kpresence.event.ReadyEvent
 import io.github.vyfor.kpresence.exception.PipeNotFoundException
 import io.github.vyfor.kpresence.logger.ILogger
-import me.owdding.skyblockrpc.Element
 import me.owdding.skyblockrpc.SkyBlockRPC
 import me.owdding.skyblockrpc.config.Config
 import tech.thatgravyboat.skyblockapi.helpers.McClient

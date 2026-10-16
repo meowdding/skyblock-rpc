@@ -7,9 +7,6 @@ fabric-api = "0.152.0+26.3"
 
 resourceful-lib = "6.0.0"
 resourceful-config = "6.0.1"
-olympus = "1.9.5"
-placeholders = "3.2.0+26.3"
-
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 
@@ -17,6 +14,3 @@ fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fab
 
 resourceful-lib = { module = "com.teamresourceful.resourcefullib:resourcefullib-fabric-26.3", version.ref = "resourceful-lib" }
 resourceful-config = { module = "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-26.3", version.ref = "resourceful-config" }
-
-olympus = { module = "earth.terrarium.olympus:olympus-fabric-26.3", version.ref = "olympus" }
-placeholders = { module = "eu.pb4:placeholder-api", version.ref = "placeholders" }

@@ -16,7 +16,6 @@ dependencies {
     implementation(libs.kotlin.gradle.plugin)
     implementation(libs.kotlin.gradle.plugin.api)
     implementation(plugin(libs.plugins.kotlin.symbol.processor))
-    implementation(plugin(libs.plugins.fabric.loom.asProvider()))
-    implementation(plugin(libs.plugins.fabric.loom.remap))
+    implementation(plugin(libs.plugins.fabric.loom))
     implementation("dev.kikugie.stonecutter:dev.kikugie.stonecutter.gradle.plugin:0.8.3")
 }

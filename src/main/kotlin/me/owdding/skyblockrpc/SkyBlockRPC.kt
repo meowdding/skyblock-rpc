@@ -3,10 +3,10 @@ package me.owdding.skyblockrpc
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.teamresourceful.resourcefulconfig.api.client.ResourcefulConfigScreen
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator
-import me.owdding.lib.utils.MeowddingUpdateChecker
 import me.owdding.skyblockrpc.config.Config
 import me.owdding.skyblockrpc.events.RegisterRpcCommandsEvent
 import me.owdding.skyblockrpc.rpc.RPCClient
+import me.owdding.skyblockrpc.utils.UpdateChecker
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -50,7 +50,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
     override fun onInitializeClient() {
         Config.register(configurator)
-        MeowddingUpdateChecker("qESHWJ0N", SELF, ::sendUpdateMessage)
+        UpdateChecker("qESHWJ0N", SELF, ::sendUpdateMessage)
         SkyBlockAPI.eventBus.register(this)
 
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, context ->
@@ -63,7 +63,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
 
     @Subscription
     @TimePassed("1s")
-    fun onTick(event: TickEvent) {
+    private fun onTick(event: TickEvent) {
         if (!LocationAPI.isOnSkyBlock) {
             RPCClient.stop()
             skyblockJoin = null
@@ -111,15 +111,15 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
     fun Component.sendWithPrefix() = Text.join(prefix, this).send()
 
     @Subscription
-    fun onRegisterCommands(event: RegisterRpcCommandsEvent) {
+    private fun onRegisterCommands(event: RegisterRpcCommandsEvent) {
         event.registerWithCallback("start") {
             RPCClient.start()
-            Text.of("Started RPC").withColor(TextColor.GREEN).sendWithPrefix()
+            Text.of("Started RPC", TextColor.GREEN).sendWithPrefix()
         }
 
         event.registerWithCallback("stop") {
             RPCClient.stop()
-            Text.of("Stopped RPC").withColor(TextColor.RED).sendWithPrefix()
+            Text.of("Stopped RPC", TextColor.RED).sendWithPrefix()
         }
 
         event.register("text") {
@@ -127,9 +127,7 @@ object SkyBlockRPC : ClientModInitializer, Logger by LoggerFactory.getLogger("Sk
                 Config.customText = getArgument("text", String::class.java)
                 Text.of("Set custom text to: ") {
                     color = TextColor.GRAY
-                    append("\"${Config.customText}\"") {
-                        color = TextColor.AQUA
-                    }
+                    append("\"${Config.customText}\"", TextColor.AQUA)
                 }.sendWithPrefix()
             }
         }

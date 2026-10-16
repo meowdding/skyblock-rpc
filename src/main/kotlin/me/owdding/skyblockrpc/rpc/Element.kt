@@ -1,4 +1,4 @@
-package me.owdding.skyblockrpc
+package me.owdding.skyblockrpc.rpc
 
 import me.owdding.skyblockrpc.config.Config
 import tech.thatgravyboat.skyblockapi.api.area.mining.GlaciteAPI
@@ -41,6 +41,7 @@ enum class Element(val example: String, val getter: () -> String) {
                 SkyBlockIsland.CRYSTAL_HOLLOWS -> "Gemstone Powder" to PowderAPI.gemstone
                 SkyBlockIsland.DWARVEN_MINES -> if (GlaciteAPI.inGlaciteTunnels()) "Glacite Powder" to PowderAPI.glacite else "Mithril Powder" to PowderAPI.mithril
                 SkyBlockIsland.GALATEA -> "Forest Whispers" to WhispersAPI.forest
+                SkyBlockIsland.TORRHUS_CANYON -> "Desert Whispers" to WhispersAPI.desert
                 else -> null to null
             }
             if (name == null || amount == null) "No Powder Island"

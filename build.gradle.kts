@@ -34,7 +34,7 @@ repositories {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_25)
     compilerOptions.optIn.add("kotlin.time.ExperimentalTime")
     compilerOptions.freeCompilerArgs.addAll(
         "-Xcontext-parameters",
@@ -88,9 +88,7 @@ tasks.processResources {
         "minecraft_range" to range,
         "fabric_lang_kotlin" to versionedCatalog.versions["fabric.language.kotlin"],
         "rlib" to versionedCatalog.versions["resourceful-lib"],
-        "olympus" to versionedCatalog.versions["olympus"],
         "sbapi" to versionedCatalog.versions["skyblockapi"],
-        "mlib" to versionedCatalog.versions["meowdding.lib"],
         "rconfigkt" to versionedCatalog.versions["rconfigkt"],
         "rconfig" to versionedCatalog.versions["resourceful-config"],
     )
@@ -163,21 +161,12 @@ dependencies {
     include(versionedCatalog["skyblockapi"]) {
         capabilities { requireCapability("tech.thatgravyboat:skyblock-api-${stonecutter.current.version}") }
     }
-    api(versionedCatalog["meowdding.lib"]) {
-        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}") }
-    }
-    include(versionedCatalog["meowdding.lib"]) {
-        capabilities { requireCapability("me.owdding.meowdding-lib:meowdding-lib-${stonecutter.current.version}") }
-    }
 
     implementation(versionedCatalog["hypixelapi"])
 
     includeImplementation(versionedCatalog["resourceful.lib"])
     includeImplementation(versionedCatalog["resourceful.config"])
     includeImplementation(versionedCatalog["resourcefulkt.config"])
-
-    implementation(versionedCatalog["placeholders"])
-    includeImplementation(versionedCatalog["olympus"])
 
     includeImplementation(versionedCatalog["discordipc"])
 }
